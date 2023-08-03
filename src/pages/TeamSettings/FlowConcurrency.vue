@@ -113,17 +113,13 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant']),
-    ...mapGetters('license', ['permissions', 'hasPermission']),
+    ...mapGetters('license', ['permissions']),
     // Determine if user has permission to add, edit, and delete concurrency limits
     hasManagementPermission() {
       return this.permissionsCheck
     },
     permissionsCheck() {
-      return (
-        this.hasPermission('create', 'concurrency-limit') &&
-        this.hasPermission('update', 'concurrency-limit') &&
-        this.hasPermission('delete', 'concurrency-limit')
-      )
+      return true
     },
     // Determine if user has the proper permissions to access TCLs
     // - They are on a license that grants explicit permission to access this feature
@@ -131,7 +127,7 @@ export default {
       // If permissions are still loading...
       if (!this.permissions) return true
 
-      return this.hasPermission('feature', 'concurrency-limit')
+      return true
     },
     // Merge usage details into labels array
     labelsWithUsage() {

@@ -65,9 +65,8 @@ export const changeStateMixin = {
   },
   computed: {
     ...mapGetters('user', ['user']),
-    ...mapGetters('license', ['hasPermission']),
     activeButton() {
-      return this.hasPermission('update', 'run')
+      return true
     },
     isFinished() {
       return FINISHED_STATES.includes(this.flowRun.state)
@@ -80,9 +79,9 @@ export const changeStateMixin = {
     },
     filteredStates() {
       if (this.dialogType === 'task run') {
-        return this.taskStates.filter(state => state !== this.taskRun.state)
+        return this.taskStates.filter((state) => state !== this.taskRun.state)
       } else {
-        return this.flowStates.filter(state => state !== this.flowRun.state)
+        return this.flowStates.filter((state) => state !== this.flowRun.state)
       }
     },
     checkVersion() {
@@ -183,7 +182,7 @@ export const changeStateMixin = {
                 }
               }
             } else {
-              taskState = this.taskRunIds.map(taskRun => {
+              taskState = this.taskRunIds.map((taskRun) => {
                 return {
                   version: taskRun.version,
                   task_run_id: taskRun.id,
@@ -269,7 +268,7 @@ export const changeStateMixin = {
             childMapIndex: -1
           }
         })
-        const taskState = data.task_run.map(taskRun => {
+        const taskState = data.task_run.map((taskRun) => {
           return {
             version: taskRun.version,
             task_run_id: taskRun.id,

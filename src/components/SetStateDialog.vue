@@ -1,6 +1,5 @@
 <script>
 import { changeStateMixin } from '@/mixins/changeStateMixin'
-import { mapGetters } from 'vuex'
 
 export default {
   mixins: [changeStateMixin],
@@ -10,9 +9,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('license', ['hasPermission']),
     permissionsCheck() {
-      return !this.hasPermission('update', 'run')
+      return false
     }
   },
   methods: {

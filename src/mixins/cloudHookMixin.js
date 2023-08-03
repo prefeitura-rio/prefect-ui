@@ -4,7 +4,6 @@ import {
   GROUP_COLORS,
   STATES
 } from '@/utils/cloudHooks'
-import LogRocket from 'logrocket'
 import { mapGetters } from 'vuex'
 
 export const cloudHookMixin = {
@@ -68,13 +67,7 @@ export const cloudHookMixin = {
           }
         }, 500)
       } catch (e) {
-        LogRocket.captureException(e, {
-          extra: {
-            pageName: 'Flow Settings',
-            stage: 'Cloud Hook Status Update'
-          }
-        })
-
+        console.error(e)
         item.loading = false
       }
     },
@@ -101,19 +94,19 @@ export const cloudHookMixin = {
       return GROUP_COLORS[group]
     },
     typeIcon(type) {
-      const hook = this.cloudHookTypes.find(t => t.type == type)
+      const hook = this.cloudHookTypes.find((t) => t.type == type)
       if (hook) return hook.icon
       return ''
     },
     typeTitle(type) {
-      const hook = this.cloudHookTypes.find(t => t.type == type)
+      const hook = this.cloudHookTypes.find((t) => t.type == type)
       if (hook) return hook.title
       return type.toLowerCase()
     },
     cloudHookStateGroup(group, states) {
       return (
         STATES[group] &&
-        STATES[group].every(state => states?.includes(state)) &&
+        STATES[group].every((state) => states?.includes(state)) &&
         STATES[group].length == states.length
       )
     }

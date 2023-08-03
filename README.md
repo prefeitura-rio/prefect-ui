@@ -3,15 +3,6 @@
 </p>
 
 <p align="center">
-   <a href="https://app.netlify.com/sites/prefect-ui/deploys">
-      <img src="https://api.netlify.com/api/v1/badges/effeac10-a905-46ee-8e93-b59454ecc8bb/deploy-status" alt="Netlify Build Status" alt="Netlify status badge">
-   </a>
-
-   <a href="https://prefect.io/slack">
-      <img src="https://prefect-slackin.herokuapp.com/badge.svg" alt="Slack members status badge">
-   </a>
-</p>
-<p align="center">
    <a href="https://prefect.io">
     <img src="https://images.ctfassets.net/gm98wzqotmnx/3mwImS57DEydMQXU1FCGG/6e36e2d49faf78cf4a166f123c2c43ca/image__5_.png" height="27" alt="Powered By Prefect">
     </a>
@@ -19,7 +10,7 @@
 
 # Prefect UI
 
-Note: This repo is for Prefect UI development. To run the Prefect UI as part of [Prefect Server](https://github.com/PrefectHQ/server/), install [Prefect](https://github.com/prefecthq/prefect) and run `prefect server start`.
+> Note: This is not meant to be backwards-compatible with any version of the original Prefect UI. The whole purpose of this fork is to adapt the UI for supporting multi-tenancy auth with [prefeitura-rio/prefect-auth-proxy](https://github.com/prefeitura-rio/prefect-auth-proxy).
 
 ### Installation
 
@@ -85,9 +76,11 @@ This repo comes with a Dockerfile for building a UI image; it's generally not re
 The Prefect UI requires a functional Prefect API to operate. For details on starting Prefect Server, visit the [docs](https://docs.prefect.io/api/latest/#ui-and-server).
 
 #### Submitting a PR
-PR Titles should include a prefix that sets out the purpose of the PR.  Most PRs will begin with the prefix Bugfix or Feature.  The title should describe the work and purpose of the PR clearly and succinctly and should be appropriate and safe for the Prefect community. 
+
+PR Titles should include a prefix that sets out the purpose of the PR. Most PRs will begin with the prefix Bugfix or Feature. The title should describe the work and purpose of the PR clearly and succinctly and should be appropriate and safe for the Prefect community.
 
 ###### Example
+
 Feature: Add create flow run method to automations
 
 ## License

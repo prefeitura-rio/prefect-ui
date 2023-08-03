@@ -1,6 +1,4 @@
 <script>
-import { mapGetters } from 'vuex'
-
 export default {
   props: {
     disabled: {
@@ -35,7 +33,6 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('license', ['hasPermission']),
     duplicatedColor() {
       return this.duplicate ? 'error' : 'primary'
     }
@@ -66,7 +63,7 @@ export default {
     @click="handleClick"
   >
     <slot></slot>
-    <v-tooltip v-if="closable && hasPermission('update', 'run')" bottom>
+    <v-tooltip v-if="closable" bottom>
       <template #activator="{ on }">
         <v-btn
           :disabled="disabled && !loading"

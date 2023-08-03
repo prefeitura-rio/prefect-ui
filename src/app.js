@@ -15,8 +15,6 @@ import { defaultApolloProvider } from '@/vue-apollo'
 import { createRouter } from '@/router'
 import VueMeta from 'vue-meta'
 
-import LogRocket from 'logrocket'
-
 // Filters
 import duration from '@/filters/duration'
 import {
@@ -35,7 +33,6 @@ import { insertedActions, updatedActions } from '@/directives/disable-read-only'
 // Functional Components
 import TransitionHeight from '@/components/Functional/Transition-Height'
 import TruncatedSpan from '@/components/Functional/TruncatedSpan'
-import GetCloud from '@/components/GetCloud'
 
 import '@/styles/atelier-sulphurpool-light.scss'
 
@@ -73,16 +70,14 @@ Vue.use(VueMeta, {
 Vue.prototype.$globalApolloQueries = {}
 
 // Vue Global Error Handler
-Vue.config.errorHandler = function(error, vm, trace) {
+Vue.config.errorHandler = function (error, vm, trace) {
   if (error?.message?.includes("'_observe'")) return
   if (process.env.NODE_ENV === 'development')
     // eslint-disable-next-line no-console
     console.log('Vue Global Error Handler', { error, vm, trace })
-  LogRocket.captureException(error)
-  LogRocket.log('Related to error', vm, error)
 }
 
-Vue.config.warnHandler = function(error, vm, trace) {
+Vue.config.warnHandler = function (error, vm, trace) {
   if (error?.message?.includes("'_observe'")) return
   if (process.env.NODE_ENV === 'development')
     // eslint-disable-next-line no-console
@@ -90,11 +85,10 @@ Vue.config.warnHandler = function(error, vm, trace) {
 }
 
 // Catch the rest
-window.onerror = function(error) {
+window.onerror = function (error) {
   if (process.env.NODE_ENV === 'development')
     // eslint-disable-next-line no-console
     console.log('Window Error Handler', error)
-  LogRocket.captureException(error)
 }
 
 // Add Filters
@@ -112,7 +106,6 @@ Vue.filter('roundThousands', roundThousands)
 
 Vue.component('HeightTransition', TransitionHeight)
 Vue.component('Truncate', TruncatedSpan)
-Vue.component('GetCloud', GetCloud)
 
 // This is a global mixin used to clean up any
 // references a component may have after it's destroyed.
@@ -170,7 +163,7 @@ Vue.mixin({
           this.$apollo.vm = null
         }
 
-        Object.keys(this).forEach(key => {
+        Object.keys(this).forEach((key) => {
           try {
             !blockedProps.includes(key) &&
               !(key in this[key]?.$props) &&
@@ -217,22 +210,6 @@ try {
 // eslint-disable-next-line no-unused-vars
 let PrefectUI
 export const CreatePrefectUI = () => {
-  try {
-    if (
-      process.env.VUE_APP_LOG_ROCKET_PUBLIC_ID &&
-      process.env.VUE_APP_BACKEND === 'CLOUD' &&
-      store.getters['auth/user']
-    ) {
-      LogRocket.identify(store.getters['auth/user'].sub, {
-        name: store.getters['auth/user'].user.fullName,
-        email: store.getters['auth/user'].email
-      })
-    }
-  } catch (e) {
-    // eslint-disable-next-line no-console
-    console.log(e)
-  }
-
   const loader = document.querySelector('div.loading')
   loader.style.display = 'none'
 
@@ -243,6 +220,6 @@ export const CreatePrefectUI = () => {
     store,
     publicPath: './',
     apolloProvider: defaultApolloProvider,
-    render: h => h(App)
+    render: (h) => h(App)
   }).$mount('#app')
 }

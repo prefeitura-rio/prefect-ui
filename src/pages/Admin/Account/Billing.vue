@@ -22,7 +22,7 @@ export default {
   computed: {
     ...mapGetters('tenant', ['tenant', 'tenants']),
     ...mapGetters('user', ['user']),
-    ...mapGetters('license', ['license', 'hasPermission']),
+    ...mapGetters('license', ['license']),
     isBank() {
       return (
         this.payment?.type == 'ach_credit_transfer' ||
@@ -40,7 +40,7 @@ export default {
       return this.license?.terms?.is_self_serve
     },
     permissionsCheck() {
-      return this.hasPermission('update', 'license')
+      return true
     },
     payment() {
       return this.tenant?.stripe_customer?.sources?.data?.find(

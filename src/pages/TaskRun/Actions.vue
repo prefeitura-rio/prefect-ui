@@ -20,9 +20,8 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant', 'role']),
-    ...mapGetters('license', ['hasPermission']),
     permissionsCheck() {
-      return !this.hasPermission('update', 'run')
+      return false
     }
   },
   methods: {}

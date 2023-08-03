@@ -2,7 +2,6 @@
 import { mapActions, mapGetters } from 'vuex'
 import { handleMembershipInvitations } from '@/mixins/membershipInvitationMixin'
 import { pollsTenantsMixin } from '@/mixins/polling/pollsTenantsMixin'
-import AcceptConfirmInputRow from '@/components/AcceptConfirmInputRow'
 import { clearCache } from '@/vue-apollo'
 
 const backendProtectedRoutes = [
@@ -37,7 +36,6 @@ const tenantProtectedRoutes = [
 ]
 
 export default {
-  components: { AcceptConfirmInputRow },
   mixins: [handleMembershipInvitations, pollsTenantsMixin],
   data() {
     return {
@@ -46,9 +44,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant', 'tenants']),
-    ...mapGetters('user', ['invitations', 'memberships']),
     role() {
       if (!this.tenant) return
 
@@ -70,11 +66,7 @@ export default {
       return role
     },
     teams() {
-      return this.isCloud
-        ? this.memberships?.map(m => {
-            return { ...m, ...m.tenant }
-          })
-        : this.tenants
+      return this.tenants
     }
   },
   methods: {
@@ -166,24 +158,16 @@ export default {
       await this.setCurrentTenant(tenant.slug)
 
       clearCache()
-      this.handlePostTokenRouting()
+      this.$router.push({
+        name: 'dashboard',
+        params: { tenant: this.tenant.slug }
+      })
     },
     async handlePostTokenRouting() {
       try {
-        if (this.isCloud && !this.tenant.settings.teamNamed) {
-          await this.$router.push({
-            name: 'welcome',
-            params: {
-              tenant: this.tenant.slug
-            }
-          })
-
-          return
-        }
-
         if (
           tenantProtectedRoutes.includes(this.$route.name) ||
-          (this.isServer && backendProtectedRoutes.includes(this.$route.name))
+          (backendProtectedRoutes.includes(this.$route.name))
         ) {
           await this.$router.push({
             name: 'dashboard',
@@ -243,16 +227,7 @@ export default {
           v-on="on"
         >
           <v-list-item-avatar tile class="mr-2">
-            <v-badge
-              v-if="invitations && invitations.length > 0"
-              :value="invitations && invitations.length"
-              :content="invitations && invitations.length"
-              color="accentPink"
-              inline
-              class="ml-1 white--text"
-            />
             <v-icon
-              v-else
               :color="model ? 'primaryDark' : 'grey darken-1'"
               small
             >
@@ -291,7 +266,7 @@ export default {
           >
             <v-list-item-content>
               <v-list-item-title>
-                {{ team.name }}
+                {{ team.slug }}
               </v-list-item-title>
               <v-list-item-subtitle
                 v-if="tenant.id == team.id"
@@ -299,45 +274,6 @@ export default {
               >
                 Current
               </v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-
-        <v-list
-          v-if="invitations && invitations.length > 0"
-          :disabled="loading"
-        >
-          <v-subheader>
-            <v-icon x-small class="mr-2">
-              fas fa-envelope
-            </v-icon>
-            <div>Invitations</div>
-            <v-divider class="ml-4" />
-          </v-subheader>
-          <v-list-item
-            v-for="invitation in invitations"
-            :key="invitation.id"
-            class="pl-4 py-2 disabled-list-item"
-            :ripple="false"
-          >
-            <v-list-item-content>
-              <AcceptConfirmInputRow
-                :label="invitation.tenant.name"
-                :loading="loading"
-                @accept="
-                  handleAcceptPendingInvitation(
-                    invitation.id,
-                    invitation.tenant.name,
-                    invitation.tenant.slug
-                  )
-                "
-                @decline="
-                  handleDeclinePendingInvitation(
-                    invitation.id,
-                    invitation.tenant.name
-                  )
-                "
-              />
             </v-list-item-content>
           </v-list-item>
         </v-list>

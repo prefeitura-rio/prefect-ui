@@ -34,9 +34,8 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['role']),
-    ...mapGetters('license', ['hasPermission']),
     permissionsCheck() {
-      return !this.hasPermission('delete', 'flow')
+      return false
     },
     all() {
       if (this.allFlows) return true

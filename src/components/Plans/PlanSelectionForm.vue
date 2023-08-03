@@ -1,5 +1,4 @@
 <script>
-import LogRocket from 'logrocket'
 import { mapGetters, mapActions } from 'vuex'
 import CardDetails from '@/components/Plans/CardDetails'
 import ExternalLink from '@/components/ExternalLink'
@@ -81,12 +80,6 @@ export default {
         }
       } catch (e) {
         this.error = true
-        LogRocket.captureException(e, {
-          extra: {
-            pageName: 'Plan selection',
-            stage: 'Create usage based license'
-          }
-        })
       } finally {
         this.loading = false
       }

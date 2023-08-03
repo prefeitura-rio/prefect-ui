@@ -1,24 +1,16 @@
 <script>
 import { mapGetters } from 'vuex'
 import ConnectionMenu from '@/components/Nav/ConnectionMenu'
-import GlobalSearch from '@/components/GlobalSearchBar/GlobalSearch'
-import HelpMenu from '@/components/Nav/HelpMenu'
-import NotificationMenu from '@/components/Nav/NotificationMenu'
 import Links from '@/components/Nav/Links'
 import TeamSideNavButton from '@/components/Nav/TeamSideNavButton'
 import UserMenu from '@/components/Nav/UserMenu'
-import ChatLauncher from '@/components/Nav/ChatLauncher'
 
 export default {
   components: {
     ConnectionMenu,
-    GlobalSearch,
-    HelpMenu,
     Links,
-    NotificationMenu,
     TeamSideNavButton,
     UserMenu,
-    ChatLauncher
   },
   data() {
     return {
@@ -27,7 +19,6 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('api', ['isCloud', 'isServer']),
     ...mapGetters('auth', ['isAuthenticated', 'isAuthorized']),
     ...mapGetters('tenant', ['tenant']),
     isTransparent() {
@@ -44,9 +35,7 @@ export default {
     navBarColor() {
       return this.isTransparent
         ? 'transparent'
-        : this.isCloud
-        ? 'primary'
-        : 'secondary'
+        : 'primary'
     },
     slug() {
       return this.tenant?.slug
@@ -59,7 +48,7 @@ export default {
   <v-app-bar app elevate-on-scroll fixed :color="navBarColor">
     <router-link
       :to="
-        isServer || isAuthorized
+        isAuthorized
           ? {
               name: 'dashboard',
               params: {
@@ -85,7 +74,7 @@ export default {
       </v-btn>
     </router-link>
 
-    <TeamSideNavButton v-if="isServer || isAuthorized" />
+    <TeamSideNavButton v-if="isAuthorized" />
 
     <v-divider vertical class="white vertical-divider my-auto mx-2" />
 
@@ -94,29 +83,19 @@ export default {
     <!-- (likely a Vuetify bug) -->
     <template v-if="$vuetify.breakpoint.mdAndDown" #extension>
       <Links
-        v-if="$vuetify.breakpoint.mdAndDown && (isServer || isAuthorized)"
+        v-if="$vuetify.breakpoint.mdAndDown && (isAuthorized)"
       />
     </template>
 
     <Links
-      v-if="!$vuetify.breakpoint.mdAndDown && (isServer || isAuthorized)"
+      v-if="!$vuetify.breakpoint.mdAndDown && (isAuthorized)"
     />
 
     <v-spacer></v-spacer>
 
-    <GlobalSearch
-      v-if="$vuetify.breakpoint.smAndUp && (isServer || isAuthorized)"
-    />
-
-    <HelpMenu />
-
-    <ChatLauncher v-if="isCloud" />
-
-    <NotificationMenu v-if="isServer || isAuthorized" />
-
     <ConnectionMenu />
 
-    <UserMenu v-if="isCloud" />
+    <UserMenu />
   </v-app-bar>
 </template>
 

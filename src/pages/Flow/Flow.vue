@@ -9,8 +9,6 @@ import FlowRunHeartbeatTile from '@/pages/Flow/FlowRunHeartbeat-Tile'
 import FlowRunTableTile from '@/pages/Flow/FlowRunTable-Tile'
 import RunTiles from '@/pages/Flow/Run'
 import SchematicTile from '@/pages/Flow/Schematic-Tile'
-import AutomationsTile from '@/pages/Flow/Automations-Tile'
-import Settings from '@/pages/Flow/Settings'
 import SubPageNav from '@/layouts/SubPageNav'
 import SummaryTile from '@/pages/Flow/Summary-Tile'
 import DescribeTile from '@/pages/Flow/Describe'
@@ -20,7 +18,7 @@ import TileLayoutFull from '@/layouts/TileLayout-Full'
 import FlowRunHistoryTile from '@/pages/Flow/FlowRunHistory-Tile'
 import UpcomingRunsTile from '@/pages/Flow/UpcomingRuns-Tile'
 import VersionsTile from '@/pages/Flow/Versions-Tile'
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions } from 'vuex'
 
 export default {
   metaInfo() {
@@ -30,7 +28,6 @@ export default {
   },
   components: {
     Actions,
-    AutomationsTile,
     BreadCrumbs,
     DetailsTile,
     ErrorsTile,
@@ -39,7 +36,6 @@ export default {
     NavTabBar,
     RunTiles,
     SchematicTile,
-    Settings,
     SubPageNav,
     SummaryTile,
     TasksTableTile,
@@ -68,11 +64,6 @@ export default {
           icon: 'view_module'
         },
         {
-          name: 'ReadMe',
-          target: 'description',
-          icon: 'far fa-file-code'
-        },
-        {
           name: 'Tasks',
           target: 'tasks',
           icon: 'pi-task'
@@ -88,26 +79,14 @@ export default {
           icon: 'pi-schematic'
         },
         {
-          name: 'Automations',
-          target: 'automations',
-          icon: 'fad fa-random'
-        },
-        {
           name: 'Run',
           target: 'run',
           icon: 'fa-rocket'
         },
-        {
-          name: 'Settings',
-          target: 'settings',
-          icon: 'settings',
-          align: 'right'
-        }
       ]
     }
   },
   computed: {
-    ...mapGetters('api', ['isCloud']),
     flowGroupId() {
       return this.$route.params.id
     },
@@ -169,9 +148,7 @@ export default {
       }
     },
     flowTabs() {
-      return this.isCloud
-        ? this.tabs
-        : this.tabs.filter(tab => tab.name !== 'Automations')
+      return this.tabs
     }
   },
   watch: {
@@ -188,13 +165,13 @@ export default {
     ...mapActions('data', ['activateFlow', 'resetActiveData']),
     onIntersect([entry]) {
       this.$apollo.queries.flowGroup.skip = !entry.isIntersecting
-      this.$apollo.queries.lastFlowRun.skip = !entry.isIntersecting
+      this.$apollo.queries.lastFlowRun.skip = !entry.isIntersecting || !this.selectedFlow
     }
   },
   apollo: {
     flowGroup: {
       query() {
-        return require('@/graphql/Flow/flow.js').default(this.isCloud)
+        return require('@/graphql/Flow/flow.js').default()
       },
       variables() {
         return {
@@ -399,16 +376,6 @@ export default {
       </v-tab-item>
 
       <v-tab-item
-        value="automations"
-        transition="tab-fade"
-        reverse-transition="tab-fade"
-      >
-        <TileLayoutFull>
-          <AutomationsTile slot="row-2-tile" :flow="selectedFlow" />
-        </TileLayoutFull>
-      </v-tab-item>
-
-      <v-tab-item
         value="description"
         transition="tab-fade"
         reverse-transition="tab-fade"
@@ -444,20 +411,6 @@ export default {
           :flow-group="flowGroup"
         />
       </v-tab-item>
-
-      <v-tab-item
-        value="settings"
-        transition="tab-fade"
-        reverse-transition="tab-fade"
-      >
-        <TileLayoutFull>
-          <Settings
-            slot="row-2-tile"
-            :flow="selectedFlow"
-            :flow-group="flowGroup"
-          />
-        </TileLayoutFull>
-      </v-tab-item>
     </v-tabs-items>
 
     <v-bottom-navigation
@@ -486,30 +439,11 @@ export default {
         <v-icon>pi-schematic</v-icon>
       </v-btn>
 
-      <v-btn :input-value="tab == 'automations'" @click="tab = 'automations'">
-        Automations
-        <v-icon>fad fa-random</v-icon>
-      </v-btn>
-
-      <v-btn :input-value="tab == 'versions'" @click="tab = 'description'">
-        ReadMe
-        <v-icon>far fa-file-code</v-icon>
-      </v-btn>
-
-      <!-- <v-btn disabled @click="tab = 'analytics'">
-        Analytics
-        <v-icon>insert_chart_outlined</v-icon>
-      </v-btn> -->
-
       <v-btn :input-value="tab == 'run'" @click="tab = 'run'">
         Run
         <v-icon>fa-rocket</v-icon>
       </v-btn>
 
-      <v-btn :input-value="tab == 'settings'" @click="tab = 'settings'">
-        Settings
-        <v-icon>settings</v-icon>
-      </v-btn>
     </v-bottom-navigation>
   </v-sheet>
 </template>

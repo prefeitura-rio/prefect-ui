@@ -38,7 +38,6 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant', 'role']),
-    ...mapGetters('license', ['hasPermission']),
     isScheduled() {
       return this.flowRun?.state === 'Scheduled'
     },
@@ -149,8 +148,7 @@ export default {
             :disabled="
               isLateRun ||
                 runFlowNowLoading ||
-                runFlowNowClicked ||
-                !hasPermission('create', 'run')
+                runFlowNowClicked
             "
             small
             @click="runFlowNow"
@@ -160,10 +158,7 @@ export default {
           </v-btn>
         </div>
       </template>
-      <span v-if="!hasPermission('update', 'run')">
-        You don't have permission to restart flow runs
-      </span>
-      <span v-else-if="runFlowNowClicked">
+      <span v-if="runFlowNowClicked">
         This flow run has been scheduled to start as soon as possible.
       </span>
       <span v-else-if="isLateRun">
@@ -184,7 +179,7 @@ export default {
             style="height: 46px;"
             small
             :disabled="
-              !hasPermission('update', 'run') || !canRestart || restartDialog
+              !canRestart || restartDialog
             "
             color="info"
             @click="handleRestartClick"
@@ -194,10 +189,7 @@ export default {
           </v-btn>
         </div>
       </template>
-      <span v-if="!hasPermission('update', 'run')">
-        You don't have permission to restart flow runs
-      </span>
-      <span v-else-if="!canRestart"
+      <span v-if="!canRestart"
         >You can only restart flow runs from a failed or cancelled state.
         <span v-if="isFinished"
           >If you wish to run this flow run again, you can set it (and its task
@@ -250,10 +242,7 @@ export default {
           </v-btn>
         </div>
       </template>
-      <span v-if="!hasPermission('delete', 'run')">
-        You don't have permission to delete flows
-      </span>
-      <span v-else>Coming Soon!</span>
+      <span>Coming Soon!</span>
     </v-tooltip>
   </div>
 </template>

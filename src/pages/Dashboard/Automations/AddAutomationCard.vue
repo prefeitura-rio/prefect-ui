@@ -9,7 +9,6 @@ import {
   actionTypes
 } from '@/utils/automations'
 import ConfirmDialog from '@/components/ConfirmDialog'
-import UpgradeBadge from '@/components/UpgradeBadge'
 import DeleteAgentConfig from './DeleteAgentConfig.vue'
 
 const systemActions = [
@@ -23,7 +22,6 @@ export default {
     AddAction,
     CreateAgentConfigForm,
     ConfirmDialog,
-    UpgradeBadge,
     DeleteAgentConfig
   },
   mixins: [pollsProjectsMixin],
@@ -464,9 +462,6 @@ export default {
         this.switchStep('selectEventType')
       }
     },
-    hasPermission(permission) {
-      return permission ? this.permissions?.includes(permission) : true
-    },
     selectFlowEventType(type) {
       this.steps['selectEventType'].complete = true
       if (type) this.flowEventType = type
@@ -749,7 +744,7 @@ export default {
   apollo: {
     flows: {
       query() {
-        return require('@/graphql/Dashboard/flows.js').default(this.isCloud)
+        return require('@/graphql/Dashboard/flows.js').default()
       },
       variables() {
         let searchParams = [{ archived: { _eq: false } }]
@@ -765,11 +760,9 @@ export default {
           orParams.push({ id: { _eq: this.search } })
         }
 
-        if (this.isCloud) {
           orParams.push({
             created_by: { username: { _ilike: this.searchFormatted } }
           })
-        }
 
         return {
           searchParams: {
@@ -999,7 +992,7 @@ export default {
                 "
                 class="mr-4 cursor-pointer text-h6 font-weight-light remove--disabled"
                 :class="{ flash: animated }"
-                :disabled="!hasPermission(item.permission)"
+                :disabled="false"
                 :input-value="agentOrFlow === item.type"
                 @click="selectAgentOrFlow(item.type)"
               >
@@ -1007,14 +1000,6 @@ export default {
                   {{ item.type === 'flow' ? 'pi-flow' : 'pi-agent' }}
                 </v-icon>
                 <span class="text-lowercase">{{ item.label }}</span>
-
-                <UpgradeBadge v-if="!hasPermission(item.permission)">
-                  <span class="font-weight-medium"
-                    ><span class="text-capitalize">{{ item.label }}</span>
-                    automations</span
-                  >
-                  are only available on Standard and Enterprise plans.
-                </UpgradeBadge>
               </v-btn>
             </v-col>
           </v-row>
@@ -1238,16 +1223,11 @@ export default {
                 :class="{ flash: animated }"
                 class="mr-4 cursor-pointer text-h6 font-weight-light remove--disabled"
                 :input-value="flowEventType.name === item.name"
-                :disabled="!hasPermission(item.permission)"
+                :disabled="false"
                 @click="selectFlowEventType(item)"
                 ><div class="text-center text-body-1 text-none">
                   {{ item.name }}
                 </div>
-
-                <UpgradeBadge v-if="!hasPermission(item.permission)">
-                  <span class="font-weight-medium">Flow SLA automations</span>
-                  are only available on Standard and Enterprise plans.
-                </UpgradeBadge>
               </v-btn>
             </v-col>
           </v-row>
@@ -1397,16 +1377,6 @@ export default {
           <v-col cols="12">
             <div class="text-overline">
               System actions
-
-              <UpgradeBadge
-                v-if="
-                  systemActions.length && !hasPermission('feature:api-action')
-                "
-                inline
-              >
-                <span class="font-weight-medium">System actions</span> are only
-                available on Standard and Enterprise plans.
-              </UpgradeBadge>
             </div>
 
             <div
@@ -1424,7 +1394,7 @@ export default {
               class="chip-small pa-2 mr-4 my-2 cursor-pointer text-body-1 d-inline-block"
               :class="{
                 active: chosenAction && chosenAction.id === item.id,
-                disabled: !hasPermission('feature:api-action'),
+                disabled: false,
                 flash: animated
               }"
               @click="selectAction(item)"

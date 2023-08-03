@@ -2,7 +2,6 @@
 import uniq from 'lodash/uniq'
 import { mapGetters, mapActions, mapMutations } from 'vuex'
 import { pollsAgentsMixin } from '@/mixins/polling/pollsAgentsMixin'
-import LogRocket from 'logrocket'
 import SubPageNav from '@/layouts/SubPageNav'
 import { formatTime } from '@/mixins/formatTimeMixin.js'
 import difference from 'lodash/difference'
@@ -40,7 +39,6 @@ export default {
       'sorting'
     ]),
     ...mapGetters('tenant', ['tenant']),
-    ...mapGetters('api', ['isCloud']),
 
     oldAgents() {
       return !!this.filteredAgents?.find(agent => agent.status === 'unhealthy')
@@ -94,7 +92,6 @@ export default {
           agent => agent.status === 'unhealthy'
         )
         if (unhealthyAgents?.length === 0) {
-          LogRocket.captureMessage('Clean Up button open but no agents found')
           this.setAlert({
             alertShow: true,
             alertMessage: 'Error clearing agents',
@@ -116,14 +113,12 @@ export default {
                 agent.isDeleting = false
               }, 5000)
             })
-            .catch(e => {
-              LogRocket.captureException(e)
+            .catch(() => {
               this.clearingError = true
               agent.isDeleting = false
             })
         })
       } catch (e) {
-        LogRocket.captureException(e)
         this.setAlert({
           alertShow: true,
           alertMessage: `${e}`,
@@ -258,8 +253,7 @@ export default {
             <v-card-text>
               <p>
                 This will remove any agents that haven't queried
-                <span v-if="isCloud" class="primary--text">Prefect Cloud</span>
-                <span v-else class="secondaryGray--text">Prefect Server</span>
+                <span class="primary--text">Prefect</span>
                 in the last {{ unhealthyThreshold / 60 }} hours.
               </p>
               <p>

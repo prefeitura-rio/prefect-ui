@@ -1,13 +1,9 @@
 <script>
 import { teamProfileMixin } from '@/mixins/teamProfileMixin.js'
-import { mapGetters } from 'vuex'
 
 export default {
   components: {},
   mixins: [teamProfileMixin],
-  computed: {
-    ...mapGetters('license', ['hasPermission'])
-  }
 }
 </script>
 
@@ -19,19 +15,6 @@ export default {
 
     <v-card-subtitle> See and edit your team profile.</v-card-subtitle>
     <v-card-text class="align-self-stretch">
-      <v-alert
-        v-if="!hasPermission('update', 'tenant')"
-        class="mx-auto mb-12"
-        border="left"
-        colored-border
-        elevation="2"
-        type="warning"
-        tile
-        icon="lock"
-        max-width="540"
-      >
-        Only your team's administrators can modify these profile settings.
-      </v-alert>
       <v-text-field
         v-model="name"
         data-cy="update-profile-name"
@@ -43,7 +26,7 @@ export default {
         :disabled="isUpdatingTenant"
         :loading="isCheckingName"
         prepend-inner-icon="supervised_user_circle"
-        :readonly="!hasPermission('update', 'tenant')"
+        :readonly="false"
         @blur="checkName(name)"
         @input="resetNameMetadata"
       >
@@ -66,7 +49,7 @@ export default {
         :error-messages="slugErrors"
         :loading="isCheckingSlug"
         prepend-inner-icon="language"
-        :readonly="!hasPermission('update', 'tenant')"
+        :readonly="false"
         @blur="checkSlug(slug)"
         @input="resetSlugMetadata"
       >
@@ -81,7 +64,7 @@ export default {
 
     <v-spacer />
 
-    <v-card-actions v-if="hasPermission('update', 'tenant')" class="mt-auto">
+    <v-card-actions class="mt-auto">
       <v-spacer></v-spacer>
       <v-btn
         :disabled="!isUpdatable"

@@ -18,7 +18,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('api', ['isCloud', 'url', 'serverUrl', 'connected'])
+    ...mapGetters('api', ['url', 'serverUrl', 'connected'])
   },
   methods: {
     ...mapActions('api', ['getApi']),

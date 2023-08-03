@@ -49,9 +49,9 @@ query { hello }
     }
   },
   computed: {
-    ...mapGetters('auth', ['authorizationToken']),
+    ...mapGetters('auth', ['apiToken']),
     ...mapGetters('api', ['url']),
-    ...mapGetters('tenant', ['role'])
+    ...mapGetters('tenant', ['tenant'])
   },
   async mounted() {
     let urlQuery
@@ -60,13 +60,14 @@ query { hello }
         ${this.$route.query.query}
       `)
     }
-    const fetcher = params => {
+    const fetcher = async (params) => {
       params.query = this.addQueryLimits(params.query)
       return fetch(this.url, {
         method: 'post',
         headers: {
           'Content-Type': 'application/json',
-          authorization: `Bearer ${this.authorizationToken}`,
+          authorization: `Bearer ${this.apiToken}`,
+          'X-Prefect-Tenant-Id': this.tenant.id,
           'X-Prefect-Interactive-API': 'true'
         },
         body: JSON.stringify(params)

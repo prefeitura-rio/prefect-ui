@@ -65,7 +65,6 @@ export default {
   },
   computed: {
     ...mapGetters('agent', ['staleThreshold', 'unhealthyThreshold']),
-    ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant']),
     agent() {
       const agent = { ...this.rawAgent }
@@ -261,7 +260,7 @@ export default {
       query: require('@/graphql/Agent/agent-hooks.gql'),
       loadingKey: 'loading',
       skip() {
-        return !this.isCloud
+        return true
       },
       update: data => {
         return data.hook
@@ -323,7 +322,7 @@ export default {
     </v-dialog>
 
     <v-tabs
-      v-if="showAll && isCloud"
+      v-if="showAll"
       v-model="tab"
       tabs-border-bottom
       color="primary"
@@ -430,7 +429,7 @@ export default {
           </v-col>
         </v-row>
       </div>
-      <div v-if="showAll && isCloud" class="my-2 text-subtitle-1">
+      <div v-if="showAll" class="my-2 text-subtitle-1">
         <v-row no-gutters>
           <v-col :cols="agent.token_name ? 4 : 2">
             Token {{ agent.token_name ? 'Name' : 'ID' }}

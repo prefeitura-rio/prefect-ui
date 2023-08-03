@@ -35,7 +35,6 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant']),
-    ...mapGetters('api', ['isCloud']),
     hasContext() {
       return (
         this.flowRun.context && Object.keys(this.flowRun.context).length > 0
@@ -69,7 +68,7 @@ export default {
       return { ...flowParams, ...this.flowRun?.parameters }
     },
     isCloudOrAutoScheduled() {
-      return this.isCloud || this.flowRun?.auto_scheduled
+      return true
     }
   },
   methods: {

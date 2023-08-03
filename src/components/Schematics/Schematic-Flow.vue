@@ -5,7 +5,6 @@ import { zoom } from 'd3-zoom'
 import uniqueId from 'lodash/uniqueId'
 import throttle from 'lodash/throttle'
 import Legend from '@/components/Schematics/Legend'
-import LogRocket from 'logrocket'
 import SchematicNode from '@/components/Schematics/Schematic-Node'
 import PreviewTile from '@/components/Schematics/Preview-Tile'
 import Tooltip from '@/components/Schematics/Tooltip'
@@ -315,19 +314,6 @@ export default {
         this.error = true
         this.worker.terminate()
         this.loadingKey = 0
-
-        let message = `
-            There was an issue loading a flow schematic... this is an automated feedback message\n
-                Tenant: ${this.tenant.name}\n
-                Tenant ID: ${this.tenant.id}\n
-                Path: ${this.$route.path}\n
-            `
-        LogRocket.warn(message, {
-          extra: {
-            pageName: 'Flow Schematics',
-            stage: 'Worker Termination'
-          }
-        })
         return
       }, 60000)
 
@@ -907,23 +893,10 @@ export default {
         }, 1500)
       } catch (e) {
         this.error = true
-        LogRocket.captureException(e, {
-          extra: {
-            pageName: 'Flow Schematics',
-            stage: 'Automated Feedback Submission'
-          }
-        })
       }
       setTimeout(() => {
         this.errorReportLoading = false
       }, 1500)
-
-      LogRocket.warn(message, {
-        extra: {
-          pageName: 'Flow Schematics',
-          stage: 'Automated Feedback Submission'
-        }
-      })
     },
     tooltipStyle(data) {
       let t = this.transform?.apply([data?.x, data?.y])

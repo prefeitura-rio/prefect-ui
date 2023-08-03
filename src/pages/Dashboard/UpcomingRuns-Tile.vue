@@ -47,14 +47,13 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['timezone']),
     loading() {
       return this.loadingKey > 0
     },
     paused() {
-      return this.tenant?.settings?.work_queue_paused
+      return false
     },
     lateRuns() {
       if (!this.upcomingFlowRunsData) return null
@@ -130,13 +129,6 @@ export default {
         this.tab = this.tabs.upcoming
       }
     },
-    ['tenant.settings.work_queue_paused'](val) {
-      if (!val) {
-        setTimeout(() => {
-          this.hideOverlay()
-        }, 1500)
-      }
-    }
   },
   beforeDestroy() {
     this.upcomingFlowRunsData = []
@@ -221,7 +213,7 @@ export default {
             {{ title }}
           </div>
           <ConcurrencyInfo
-            v-if="isCloud && tab === tabs.late"
+            v-if="tab === tabs.late"
             class="text-caption position-absolute"
             style="bottom: 2px;"
           />
@@ -422,18 +414,6 @@ export default {
         @click="showOverlay('late')"
       >
         Clear late
-      </v-btn>
-
-      <v-btn
-        v-if="!overlay && isCloud"
-        small
-        depressed
-        color="primary"
-        text
-        style="z-index: 2;"
-        @click="showOverlay('queue')"
-      >
-        Options
       </v-btn>
 
       <v-btn

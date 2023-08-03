@@ -13,7 +13,6 @@ import { BatchHttpLink } from 'apollo-link-batch-http'
 import { onError } from 'apollo-link-error'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import { HttpLink } from '@apollo/client'
-import LogRocket from 'logrocket'
 
 // Install the vue plugin
 Vue.use(VueApollo)
@@ -35,10 +34,22 @@ let errors = 0,
 const batchLink = new BatchHttpLink({
   batchMax: 25,
   batchInterval: 2000,
-  uri: () => store.getters['api/url']
+  uri: () => store.getters['api/serverUrl']
+  // credentials: 'include',
+  // fetchOptions: {
+  //   mode: 'cors'
+  // }
 })
 
-const httpLink = new HttpLink({ uri: () => store.getters['api/url'] })
+const httpLink = new HttpLink({
+  uri: () => {
+    return store.getters['api/serverUrl']
+  }
+  // credentials: 'include',
+  // fetchOptions: {
+  //   mode: 'cors'
+  // }
+})
 
 // Resets the cache and stops requests if
 // the backend has changed
@@ -48,7 +59,7 @@ const backendMiddleware = new ApolloLink((operation, forward) => {
     defaultApolloClient.cache.reset()
     return
   }
-  return forward(operation).map(response => {
+  return forward(operation).map((response) => {
     errors = 0
     apiErrors = 0
     return response
@@ -88,7 +99,8 @@ const errorAfterware = onError(
       apiErrors++
     }
 
-    if (process.env.NODE_ENV !== 'production') {
+    /* eslint-disable no-constant-condition */
+    if (true) {
       /* eslint-disable no-console */
       console.groupCollapsed(
         `%c${operation.operationName || 'Unnamed Query'} error`,
@@ -98,7 +110,7 @@ const errorAfterware = onError(
 
       if (graphQLErrors?.length > 0) {
         console.group('%cGraphQL Errors', 'color: #CA9800; font-weight:bold;')
-        graphQLErrors?.forEach(error => {
+        graphQLErrors?.forEach((error) => {
           console.group(
             `%c${error.extensions?.code || 'ERROR'}`,
             'color: #B11A04; font-weight:bold;'
@@ -117,29 +129,6 @@ const errorAfterware = onError(
       }
       console.groupEnd()
       /* eslint-enable no-console */
-    }
-
-    if (
-      store.getters['api/isCloud'] &&
-      graphQLErrors?.[0].message === 'Operation timed out'
-    ) {
-      LogRocket.captureException(operation, {
-        type: 'Timeout'
-      })
-      // For now we just capture Cloud errors,
-      // we can expand this if it's helpful for debugging later
-    } else if (
-      (store.getters['api/isCloud'] && graphQLErrors) ||
-      networkError
-    ) {
-      if (graphQLErrors) {
-        LogRocket.captureException(graphQLErrors, {
-          type: 'GraphQL Errors'
-        })
-      } else if (networkError)
-        LogRocket.captureException(networkError, {
-          type: 'Network Error'
-        })
     }
 
     if (response) {
@@ -162,20 +151,11 @@ export { errorAfterware }
 // Adds authorization headers to requests headed for the Cloud API;
 // just forwards requests if headed for a Server API
 const authMiddleware = setContext(async (_, { headers }) => {
-  if (store.getters['api/isServer']) {
-    return {
-      headers: {
-        ...headers
-      }
-    }
-  }
-
-  const bearer = `Bearer ${store.getters['auth/authorizationToken']}`
+  const bearer = `Bearer ${store.getters['auth/apiToken']}`
   return {
     headers: {
       ...headers,
-      authorization: bearer,
-      'authorization-expiry': store.getters['auth/authorizationTokenExpiry']
+      authorization: bearer
     }
   }
 })
@@ -184,8 +164,6 @@ const authMiddleware = setContext(async (_, { headers }) => {
 // Checks that the request should be sent based on authorization header expiration
 // and stops the request if it shouldn't be
 const terminalRequestLink = new ApolloLink((operation, forward) => {
-  if (store.getters['api/isServer']) return forward(operation)
-
   const context = operation.getContext()
   const expiration = context.headers?.['authorization-expiry']
 
@@ -223,7 +201,7 @@ export const cache = new InMemoryCache({
 // Config
 export const defaultOptions = {
   // You can use `https` for secure connection (recommended in production)
-  httpEndpoint: () => store.getters['api/url'],
+  httpEndpoint: () => store.getters['api/serverUrl'],
   // You can use `wss` for secure connection (recommended in production)
   // Use `null` to disable subscriptions
   wsEndpoint: null,

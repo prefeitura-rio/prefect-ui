@@ -1,7 +1,6 @@
 <script>
 // Infrastructure components
 import ConnectAgentSection from '@/pages/GettingStarted/ConnectAgent-Section'
-import CreateTenantSection from '@/pages/GettingStarted/CreateTenant-Section'
 import StartPrefectServerSection from '@/pages/GettingStarted/StartPrefectServer-Section'
 
 import ExternalLink from '@/components/ExternalLink'
@@ -36,7 +35,6 @@ const exploreBlocks = [
 
 export default {
   components: {
-    CreateTenantSection,
     ConnectAgentSection,
     ExternalLink,
     StartPrefectServerSection
@@ -49,34 +47,20 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('api', ['isCloud', 'connected', 'isServer']),
+    ...mapGetters('api', ['connected']),
     ...mapGetters('tenant', ['tenantIsSet'])
   },
   watch: {
     connected(val) {
       if (val) {
         // sets the default tab displayed
-        if (this.isCloud) {
           this.gettingStartedTab = 'agent'
-        } else if (!this.tenantIsSet) {
-          this.gettingStartedTab = 'tenant'
-        } else {
-          this.gettingStartedTab = 'agent'
-        }
       }
     }
   },
   mounted() {
     // sets the default tab displayed
-    if (this.isCloud) {
       this.gettingStartedTab = 'agent'
-    } else if (!this.connected) {
-      this.gettingStartedTab = 'infrastructure'
-    } else if (!this.tenantIsSet) {
-      this.gettingStartedTab = 'tenant'
-    } else {
-      this.gettingStartedTab = 'agent'
-    }
   }
 }
 </script>
@@ -151,14 +135,8 @@ export default {
           <v-card-text>
             <v-tabs
               v-model="gettingStartedTab"
-              :background-color="isCloud ? 'primary' : 'secondary'"
+              :background-color="'primary'"
             >
-              <v-tab v-if="isServer" ref="infrastructure" href="#infrastructure"
-                >Prefect Server</v-tab
-              >
-              <v-tab v-if="isServer && !tenantIsSet" ref="tenant" href="#tenant"
-                >Creating a tenant</v-tab
-              >
               <v-tab ref="agent" href="#agent">Connecting an Agent</v-tab>
             </v-tabs>
 
@@ -166,10 +144,6 @@ export default {
               <v-tabs-items v-model="gettingStartedTab">
                 <v-tab-item value="infrastructure">
                   <StartPrefectServerSection />
-                </v-tab-item>
-
-                <v-tab-item v-if="isServer" value="tenant">
-                  <CreateTenantSection />
                 </v-tab-item>
 
                 <v-tab-item value="agent">

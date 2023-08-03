@@ -1,18 +1,13 @@
 <script>
-import Calendar from '@/pages/Calendar/Calendar-View'
 import AgentsTile from '@/pages/Dashboard/Agents-Tile'
-import BreadCrumbs from '@/components/BreadCrumbs'
 import FailedFlowsTile from '@/pages/Dashboard/FailedFlows-Tile'
 import FlowRunHistoryTile from '@/pages/Dashboard/FlowRunHistory-Tile'
 import FlowTableTile from '@/pages/Dashboard/FlowTable-Tile'
-import Automations from '@/pages/Dashboard/Automations/Automations'
 import InProgressTile from '@/pages/Dashboard/InProgress-Tile'
 import NavTabBar from '@/components/NavTabBar'
-import NotificationsTile from '@/pages/Dashboard/Notifications-Tile'
 import ProjectSelector from '@/pages/Dashboard/Project-Selector'
 import SummaryTile from '@/pages/Dashboard/Summary-Tile'
 import UpcomingRunsTile from '@/pages/Dashboard/UpcomingRuns-Tile'
-import UpgradeUsageTile from '@/pages/Dashboard/UsageTiles/UpgradeUsage-Tile'
 import SubPageNav from '@/layouts/SubPageNav'
 import { mapGetters, mapActions } from 'vuex'
 import gql from 'graphql-tag'
@@ -28,20 +23,6 @@ const serverTabs = [
     target: 'flows',
     icon: 'pi-flow'
   },
-  {
-    name: 'Calendar',
-    target: 'calendar',
-    icon: 'event',
-    iconSize: 'small'
-  }
-]
-
-const cloudTabs = [
-  {
-    name: 'Automations',
-    target: 'automations',
-    icon: 'fad fa-random'
-  }
 ]
 
 export default {
@@ -51,21 +32,16 @@ export default {
     }
   },
   components: {
-    Calendar,
-    Automations,
     AgentsTile,
-    BreadCrumbs,
     FailedFlowsTile,
     FlowTableTile,
     InProgressTile,
     NavTabBar,
-    NotificationsTile,
     ProjectSelector,
     SubPageNav,
     SummaryTile,
     FlowRunHistoryTile,
     UpcomingRunsTile,
-    UpgradeUsageTile
   },
   async beforeRouteLeave(to, from, next) {
     if (to.name == 'project') {
@@ -108,7 +84,7 @@ export default {
   },
   computed: {
     ...mapGetters('alert', ['getAlert']),
-    ...mapGetters('api', ['backend', 'isCloud', 'connected']),
+    ...mapGetters('api', ['backend', 'connected']),
     ...mapGetters('data', ['activeProject']),
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('license', ['license']),
@@ -116,7 +92,7 @@ export default {
       return this.activeProject
     },
     tabs() {
-      return [...serverTabs, ...(this.isCloud ? cloudTabs : [])]
+      return [...serverTabs]
     },
     includeProjects() {
       return this.tab != 'automations' && this.tab != 'calendar'
@@ -226,29 +202,6 @@ export default {
       </span>
 
       <span
-        v-if="projectId && project"
-        slot="breadcrumbs"
-        :style="
-          $vuetify.breakpoint.smAndDown && {
-            display: 'inline',
-            'font-size': '0.875rem'
-          }
-        "
-      >
-        <BreadCrumbs
-          :crumbs="[
-            {
-              route: {
-                name: 'dashboard',
-                params: { tenant: tenant.slug }
-              },
-              text: tenant.name
-            }
-          ]"
-        />
-      </span>
-
-      <span
         slot="page-actions"
         :class="{ 'mx-auto': $vuetify.breakpoint.xsOnly }"
       >
@@ -331,23 +284,6 @@ export default {
           </v-skeleton-loader>
 
           <v-skeleton-loader
-            v-if="
-              isCloud &&
-                license &&
-                license.terms.is_self_serve &&
-                !license.terms.is_usage_based
-            "
-            :loading="loadedTiles < 6 || usageTile == 'loading'"
-            type="image"
-            height="100%"
-            transition="quick-fade"
-            class="tile-container span-row-1"
-            tile
-          >
-            <UpgradeUsageTile />
-          </v-skeleton-loader>
-
-          <v-skeleton-loader
             :loading="loadedTiles < 3"
             type="image"
             height="100%"
@@ -371,17 +307,6 @@ export default {
               @view-details-clicked="handleAgentDetailsClick"
             />
           </v-skeleton-loader>
-
-          <v-skeleton-loader
-            :loading="loadedTiles < 5"
-            type="image"
-            height="100%"
-            transition="quick-fade"
-            class="tile-container"
-            tile
-          >
-            <NotificationsTile :project-id="projectId" full-height />
-          </v-skeleton-loader>
         </div>
       </v-tab-item>
 
@@ -396,24 +321,6 @@ export default {
           class="mx-3 my-6"
           :project-id="projectId"
         />
-      </v-tab-item>
-
-      <v-tab-item
-        class="tab-full-height"
-        value="calendar"
-        transition="tab-fade"
-        reverse-transition="tab-fade"
-      >
-        <Calendar v-if="loadedTiles > 9" class="mx-3 my-6" />
-      </v-tab-item>
-
-      <v-tab-item
-        class="tab-full-height"
-        value="automations"
-        transition="tab-fade"
-        reverse-transition="tab-fade"
-      >
-        <Automations v-if="loadedTiles > 10" class="mx-3 my-6" />
       </v-tab-item>
 
       <v-tab-item

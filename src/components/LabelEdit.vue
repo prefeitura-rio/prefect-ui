@@ -47,9 +47,8 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['role']),
-    ...mapGetters('license', ['hasPermission']),
     permissionsCheck() {
-      return !this.hasPermission('update', 'run')
+      return false
     },
     labels() {
       const labels =

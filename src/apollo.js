@@ -17,7 +17,7 @@ const errorAfterware = onError(
 
       if (graphQLErrors?.length > 0) {
         console.group('%cGraphQL Errors', 'color: #CA9800; font-weight:bold;')
-        graphQLErrors?.forEach(error => {
+        graphQLErrors?.forEach((error) => {
           console.group(
             `%c${error.extensions?.code || 'ERROR'}`,
             'color: #B11A04; font-weight:bold;'
@@ -54,7 +54,7 @@ const errorAfterware = onError(
 
 const link = from([
   errorAfterware,
-  new HttpLink({ uri: process.env.VUE_APP_CLOUD_URL })
+  new HttpLink({ uri: process.env.VUE_APP_SERVER_URL })
 ])
 
 const options = {
@@ -69,7 +69,7 @@ const options = {
 }
 
 // // Create apollo client
-export const Client = name =>
+export const Client = (name) =>
   new ApolloClient({
     name: name,
     version: '1.3',

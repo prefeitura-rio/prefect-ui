@@ -1,6 +1,6 @@
 import gql from 'graphql-tag'
 
-export default function(isCloud) {
+export default function () {
   return gql`
     query Tenants {
       tenant {
@@ -9,18 +9,8 @@ export default function(isCloud) {
         name
         info
         settings
-        
-        ${
-          isCloud
-            ? `
-              prefectAdminSettings: prefect_admin_settings
-              stripe_customer
-              license_id
-            `
-            : ''
-        }
         slug
       }
     }
-`
+  `
 }

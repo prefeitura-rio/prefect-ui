@@ -36,7 +36,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('license', ['hasPermission', 'permissions']),
+    ...mapGetters('license', ['permissions']),
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['user']),
     filteredUsers() {
@@ -170,7 +170,7 @@ export default {
       loadingKey: 'loadingKey',
       skip() {
         return (
-          !this.hasPermission('license', 'admin') || this.roles.length === 0
+          this.roles.length === 0
         )
       },
       update(data) {

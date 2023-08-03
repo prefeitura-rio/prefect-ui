@@ -1,4 +1,4 @@
 {
-    "server_url": "PREFECT_SERVER__APOLLO_URL",
-    "base_url": "PREFECT_SERVER__BASE_URL"
+    "server_url": "http://localhost:8001/proxy/",
+    "base_url": "/"
 }

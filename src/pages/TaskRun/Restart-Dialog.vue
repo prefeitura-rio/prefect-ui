@@ -23,9 +23,8 @@ export default {
   computed: {
     ...mapGetters('user', ['user']),
     ...mapGetters('tenant', ['role']),
-    ...mapGetters('license', ['hasPermission']),
     permissionsCheck() {
-      return !this.hasPermission('update', 'run')
+      return false
     },
     message() {
       return `Flow run restarted by ${this.user.username}`

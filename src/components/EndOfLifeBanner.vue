@@ -5,7 +5,6 @@ import ExternalLink from '@/components/ExternalLink'
 export default {
   components: { ExternalLink },
   computed: {
-    ...mapGetters('api', ['isCloud']),
     ...mapGetters('license', ['planType']),
     free() {
       return this.planType('FREE')

@@ -62,14 +62,13 @@ export default {
   },
   computed: {
     ...mapGetters('auth', ['user']),
-    ...mapGetters('api', ['isCloud']),
-    ...mapGetters('license', ['license', 'hasPermission']),
+    ...mapGetters('license', ['license']),
     ...mapGetters('license', ['license']),
     disabled() {
       return this.loading > 0 || !this.revealConfirm
     },
     permissionsCheck() {
-      return this.hasPermission('update', 'tenant')
+      return true
     },
     shuffledOptions() {
       let optionsCopy = [...this.options]
@@ -290,7 +289,7 @@ export default {
         this.redirectTenant ?? this.tenantChanges.slug ?? this.tenant.slug
       )
 
-      const eventSource = this.isCloud ? 'prefect_cloud' : 'prefect_server'
+      const eventSource = 'prefect_cloud' 
 
       fetch('https://sens-o-matic.prefect.io', {
         method: 'post',

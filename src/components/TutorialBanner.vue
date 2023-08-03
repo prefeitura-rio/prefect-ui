@@ -1,5 +1,4 @@
 <script>
-import { mapGetters } from 'vuex'
 import ExternalLink from '@/components/ExternalLink'
 export default {
   components: { ExternalLink },
@@ -15,9 +14,6 @@ export default {
       dismissed: false
     }
   },
-  computed: {
-    ...mapGetters('api', ['isCloud'])
-  }
 }
 </script>
 
@@ -32,13 +28,7 @@ export default {
         </v-avatar>
         <div class="ml-4">
           Pst! It looks like you don't have any flows yet;
-          <span v-if="isCloud">
-            check out the
-            <router-link :to="'/tutorial'"> tutorials</router-link>
-            for walkthroughs on writing and registering flows with Prefect and
-            the for more in-depth looks at the Prefect APIs
-          </span>
-          <span v-else>
+          <span>
             check out our
             <ExternalLink href="https://docs.prefect.io/">
               documentation

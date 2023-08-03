@@ -2,7 +2,6 @@
 import { mapActions, mapGetters } from 'vuex'
 
 import Actions from '@/pages/FlowRun/Actions'
-import Artifacts from '@/components/Artifacts/Artifacts'
 import BreadCrumbs from '@/components/BreadCrumbs'
 import NavTabBar from '@/components/NavTabBar'
 import DetailsTile from '@/pages/FlowRun/Details-Tile'
@@ -38,7 +37,6 @@ export default {
   },
   components: {
     Actions,
-    Artifacts,
     BreadCrumbs,
     DetailsTile,
     EditableTextField,
@@ -73,17 +71,11 @@ export default {
           target: 'logs',
           icon: 'format_align_left'
         },
-        {
-          name: 'Artifacts',
-          target: 'artifacts',
-          icon: 'fas fa-fingerprint'
-        }
       ]
     }
   },
   computed: {
     ...mapGetters('tenant', ['tenant']),
-    ...mapGetters('api', ['isCloud']),
     flowId() {
       return this.flowRun?.flow_id
     },
@@ -172,7 +164,7 @@ export default {
   apollo: {
     flowRun: {
       query() {
-        return require('@/graphql/FlowRun/flow-run.js').default(this.isCloud)
+        return require('@/graphql/FlowRun/flow-run.js').default()
       },
       variables() {
         return {
@@ -364,15 +356,6 @@ export default {
           />
         </TileLayoutFull>
       </v-tab-item>
-
-      <v-tab-item
-        class="tab-full-height"
-        value="artifacts"
-        transition="tab-fade"
-        reverse-transition="tab-fade"
-      >
-        <Artifacts :flow-run-id="flowRunId" />
-      </v-tab-item>
     </v-tabs-items>
 
     <v-bottom-navigation v-if="$vuetify.breakpoint.smAndDown" app fixed>
@@ -389,11 +372,6 @@ export default {
       <v-btn @click="tab = 'logs'">
         Logs
         <v-icon>format_align_left</v-icon>
-      </v-btn>
-
-      <v-btn @click="tab = 'artifacts'">
-        Artifacts
-        <v-icon>fas fa-fingerprint</v-icon>
       </v-btn>
     </v-bottom-navigation>
   </v-sheet>

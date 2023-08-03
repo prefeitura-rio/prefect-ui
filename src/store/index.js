@@ -2,10 +2,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-// Plugins
-import LogRocket from 'logrocket'
-import createPlugin from 'logrocket-vuex'
-
 // Modules
 import agent from '@/store/agent'
 import api from '@/store/api'
@@ -20,20 +16,6 @@ import alert from '@/store/alert'
 import polling from '@/store/polling'
 
 Vue.use(Vuex)
-
-const logrocketPlugin = createPlugin(LogRocket, mutation => {
-  if (
-    mutation.type === 'setAuthenticationTokens' ||
-    mutation.type === 'setAuthorizationToken' ||
-    mutation.type === 'setUser'
-  ) {
-    return {
-      type: mutation.type
-    }
-  }
-
-  return mutation
-})
 
 const store = new Vuex.Store({
   modules: {
@@ -50,7 +32,7 @@ const store = new Vuex.Store({
     user
   },
   strict: process.env.NODE_ENV !== 'production',
-  plugins: [logrocketPlugin]
+  plugins: []
 })
 
 export default store

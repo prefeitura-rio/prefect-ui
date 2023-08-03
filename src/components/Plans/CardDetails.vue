@@ -27,7 +27,6 @@ const elementClasses = {
   invalid: 'invalid'
 }
 
-import LogRocket from 'logrocket'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
@@ -135,12 +134,6 @@ export default {
           this.$emit('confirm', this.source.id)
         }
       } catch (e) {
-        LogRocket.captureException(e, {
-          extra: {
-            pageName: 'payment card',
-            stage: 'update stripe customer'
-          }
-        })
         this.loading = false
         this.cardError = 'There was a problem adding your card information.'
       }

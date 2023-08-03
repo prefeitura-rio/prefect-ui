@@ -1,6 +1,5 @@
 <script>
 import ConfirmDialog from '@/components/ConfirmDialog'
-import { mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -114,7 +113,6 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('license', ['permissions', 'hasPermission']),
     headers() {
       return this.$vuetify.breakpoint.mdAndUp
         ? this.allHeaders
@@ -286,10 +284,6 @@ export default {
       <!-- ACTIONS -->
       <template #item.actions="{ item }">
         <v-tooltip
-          v-if="
-            hasPermission('update', 'membership') &&
-              hasPermission('feature', 'basic-rbac')
-          "
           bottom
         >
           <template #activator="{ on }">
@@ -310,7 +304,7 @@ export default {
           </template>
           Modify this user's role
         </v-tooltip>
-        <v-tooltip v-if="hasPermission('delete', 'membership')" bottom>
+        <v-tooltip bottom>
           <template #activator="{ on }">
             <v-btn
               text

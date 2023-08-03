@@ -89,7 +89,6 @@ export default {
   computed: {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['user', 'timezone']),
-    ...mapGetters('license', ['hasPermission']),
     // Surface table headers based on viewport (mobile vs. desktop)
     headersByViewport() {
       return this.$vuetify.breakpoint.mdAndUp
@@ -103,8 +102,8 @@ export default {
     }
   },
   methods: {
-    permissionsCheck(action) {
-      return this.hasPermission(action, 'hook')
+    permissionsCheck() {
+      return true
     },
     closeActionDialog() {
       this.selectedAction = null

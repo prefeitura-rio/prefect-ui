@@ -1,6 +1,4 @@
 <script>
-import LogRocket from 'logrocket'
-
 export default {
   data() {
     return {
@@ -30,7 +28,6 @@ export default {
           this.error = true
         }
       } catch (error) {
-        LogRocket.captureException(error)
         this.error = true
         throw new Error(error)
       }

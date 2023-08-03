@@ -30,9 +30,8 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['role', 'tenant']),
-    ...mapGetters('license', ['hasPermission']),
     permissionsCheck() {
-      return !this.hasPermission('create', 'project')
+      return false
     }
   },
   watch: {

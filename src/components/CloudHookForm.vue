@@ -1,5 +1,4 @@
 <script>
-import LogRocket from 'logrocket'
 import { mapActions, mapGetters } from 'vuex'
 import {
   GROUP_COLORS,
@@ -260,12 +259,6 @@ export default {
           }
         }, 1000)
       } catch (e) {
-        LogRocket.captureException(e, {
-          extra: {
-            pageName: 'Flow Settings',
-            stage: 'Create State Hook'
-          }
-        })
         this.loading = false
         this.error = e
       }
@@ -297,12 +290,6 @@ export default {
           }
         }, 1000)
       } catch (e) {
-        LogRocket.captureException(e, {
-          extra: {
-            pageName: 'Flow Settings',
-            stage: 'Delete Cloud Hook'
-          }
-        })
         this.loading = false
         this.error = e
       }
@@ -348,12 +335,6 @@ export default {
           }
         }, 1000)
       } catch (e) {
-        LogRocket.captureException(e, {
-          extra: {
-            pageName: 'Flow Settings',
-            stage: 'Test Cloud Hook'
-          }
-        })
         this.testCloudHookLoading = false
         this.error = e
       }

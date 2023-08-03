@@ -26,11 +26,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('api', ['isCloud', 'connected', 'isServer']),
+    ...mapGetters('api', ['connected']),
     ...mapGetters('user', ['user'])
   },
   async mounted() {
-    if (this.isCloud) {
       try {
         const { data } = await this.$apollo.mutate({
           mutation: require('@/graphql/Tokens/create-api-key.gql'),
@@ -45,12 +44,10 @@ export default {
       } catch {
         //
       }
-    }
   },
   async beforeDestroy() {
     // We try to delete the token if it wasn't used
     if (
-      this.isCloud &&
       !this.agents?.some(agent => agent.token_id == this.tokenId) &&
       this.tokenId
     ) {
@@ -80,12 +77,12 @@ export default {
   apollo: {
     agents: {
       query() {
-        return require('@/graphql/Agent/agents.js').default(this.isCloud)
+        return require('@/graphql/Agent/agents.js').default()
       },
       pollInterval: 5000,
       loadingKey: 'loadingKey',
       skip() {
-        return this.isServer
+        return false
       },
       fetchPolicy: 'network-only',
       update: data =>
@@ -110,29 +107,8 @@ export default {
       in the docs.
     </div>
 
-    <ol v-if="isServer" class="mt-6">
-      <li value="1" class="text-h6 mt-6 mb-2">Set backend</li>
-      <div class="text-body-1 mt-2">
-        First, make sure Prefect is working against
-        {{ isCloud ? 'Prefect Cloud' : 'your Prefect Server' }}
-      </div>
-      <div
-        class="text-body-1 appBackground utilGrayDark--text rounded-sm pa-3 mt-4"
-        style="border: 1px solid var(--v-utilGrayLight-base) !important;"
-      >
-        <div class="code-block">
-          <span class="blue-grey--text text--lighten-1 user-select-none"
-            >$
-          </span>
-          <span class="primary--text font-weight-medium">prefect</span>
-          backend
-          <span class="deepRed--text font-weight-medium">server</span>
-        </div>
-      </div>
-    </ol>
-
     <ol class="mt-12">
-      <li :value="isCloud ? 1 : 2" class="text-h6 mt-6 mb-2">Start an Agent</li>
+      <li :value="1" class="text-h6 mt-6 mb-2">Start an Agent</li>
       <div class="text-body-1 mt-2">
         For your Flows to run, you'll need to start an Agent process. There are
         many different types of Agents to choose from, each of which takes a
@@ -170,7 +146,7 @@ export default {
       </div>
     </ol>
 
-    <ol v-if="isCloud" class="mt-12">
+    <ol class="mt-12">
       <li value="2" class="text-h6 mt-6 mb-2">
         View polling Agents
       </li>
@@ -197,7 +173,7 @@ export default {
         </span>
       </div>
 
-      <v-simple-table v-if="isCloud">
+      <v-simple-table >
         <template #default>
           <thead>
             <tr>

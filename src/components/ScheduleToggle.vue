@@ -20,13 +20,12 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant', 'role']),
-    ...mapGetters('license', ['hasPermission']),
     archived() {
       return this.flow.archived
     },
     disableToggle() {
-      const c = !this.hasPermission('create', 'run')
-      const d = !this.hasPermission('delete', 'run')
+      const c = false
+      const d = false
       const scheduled = this.isScheduled
 
       return (c && d) || (!scheduled && c) || (scheduled && d)
@@ -134,10 +133,7 @@ export default {
           </v-badge>
         </div>
       </template>
-      <span v-if="!hasPermission('create', 'run')">
-        You don't have permission to schedule flows.
-      </span>
-      <span v-else-if="schedule == null && isScheduled">
+      <span v-if="schedule == null && isScheduled">
         This flow is trying to schedule runs but has no schedules! Visit this
         flow's
         <span class="font-weight-bold">Settings > Schedules</span> to set a new

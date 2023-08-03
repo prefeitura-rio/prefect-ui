@@ -94,7 +94,6 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('api', ['isCloud']),
     ...mapGetters('user', ['user']),
     messageConfigLabel() {
       return this.actionType?.type === 'EMAIL'
@@ -403,7 +402,7 @@ export default {
       let allHooks
       allHooks = actionTypes
       return allHooks.filter(
-        t => (t.requiresCloud && this.isCloud) || !t.requiresCloud
+        t => (t.requiresCloud) || !t.requiresCloud
       )
     },
     createAction() {

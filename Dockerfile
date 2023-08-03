@@ -2,21 +2,25 @@
 FROM node:14.7.0 as ui
 
 # Set version args from CMD input
-ARG PREFECT_VERSION=development
+ARG PREFECT_VERSION=1.4.1
 ENV PREFECT_VERSION=$PREFECT_VERSION
 
 # Write the arg into the .env file
 RUN echo "VUE_APP_PREFECT_VERSION=${PREFECT_VERSION}" >> .env
 
-# Move application files to the app directory
-COPY ./ /app
-COPY ./LICENSE LICENSE
-
 # Switch to the app directory
 WORKDIR /app
 
+# Copy dependency files to the app directory
+COPY ./package.json /app/package.json
+COPY ./package-lock.json /app/package-lock.json
+
 # Install dependencies
 RUN npm ci
+
+# Move application files to the app directory
+COPY ./ /app
+COPY ./LICENSE LICENSE
 
 # Build static files
 RUN npm run build

@@ -44,7 +44,6 @@ export default {
       'unhealthyThreshold',
       'sortedAgents'
     ]),
-    ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['timezone']),
     agent() {
@@ -79,7 +78,7 @@ export default {
       return agent
     },
     paused() {
-      return this.tenant?.settings?.work_queue_paused
+      return false
     },
     lateRuns() {
       if (!this.agent.lateRuns) return []
@@ -160,13 +159,6 @@ export default {
         this.tab = this.tabs.submittable
       }
     },
-    ['tenant.settings.work_queue_paused'](val) {
-      if (!val) {
-        setTimeout(() => {
-          this.hideOverlay()
-        }, 1500)
-      }
-    }
   },
   mounted() {
     if (this.agent?.lateRuns?.length) this.tab = this.tabs.late

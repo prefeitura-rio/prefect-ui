@@ -31,7 +31,6 @@ export default {
   },
   computed: {
     ...mapGetters('license', ['license', 'planType']),
-    ...mapGetters('api', ['isCloud']),
     ...mapGetters('data', ['flows']),
     canShowBanners() {
       return (
@@ -49,7 +48,6 @@ export default {
     shouldShowEndOfLifeBanner() {
       return (
         this.canShowBanners &&
-        this.isCloud &&
         !this.license?.terms?.hide_freeze_banner &&
         (this.planType('FREE') ||
           this.planType('STARTER') ||

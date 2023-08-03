@@ -49,7 +49,7 @@ export default {
   computed: {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['user']),
-    ...mapGetters('license', ['license', 'hasPermission']),
+    ...mapGetters('license', ['license']),
     confirmText() {
       return this.updateAccountRole ? 'Update' : 'Add'
     },
@@ -62,13 +62,6 @@ export default {
       if (!this.roles) return []
       let rolesToRM = ['RUNNER']
 
-      if (!this.hasPermission('license', 'admin')) {
-        rolesToRM.push('ENTERPRISE_LICENSE_ADMIN')
-      }
-
-      if (!this.hasPermission('feature', 'basic-rbac')) {
-        rolesToRM.push('READ_ONLY_USER', 'USER')
-      }
       return this.roles.filter(role => !rolesToRM.includes(role.name))
     }
   },
@@ -208,15 +201,12 @@ export default {
     <template #title>Service Accounts</template>
 
     <template #subtitle>
-      <span v-if="hasPermission('create', 'service-account')">
+      <span>
         Manage service accounts and their API keys
-      </span>
-      <span v-else>
-        You don't have permission to manage Service Accounts
       </span>
     </template>
 
-    <template v-if="hasPermission('create', 'service-account')" #cta>
+    <template #cta>
       <v-btn
         color="primary"
         class="white--text"

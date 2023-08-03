@@ -48,15 +48,6 @@ const serverHeadersPost = [
   }
 ]
 
-const cloudHeaders = [
-  {
-    text: 'Created By',
-    value: 'created_by.username',
-    sortable: false,
-    width: '12.5%'
-  }
-]
-
 export default {
   components: {
     CardTitle,
@@ -89,7 +80,6 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['timezone', 'settings']),
     headers() {
@@ -104,15 +94,12 @@ export default {
             ]
           : []),
         ...serverHeaders,
-        ...(this.isCloud ? cloudHeaders : []),
         ...serverHeadersPost
       ]
     },
     placeholderMessage() {
       if (this.$vuetify.breakpoint.mdAndUp) {
-        return `Search by Flow, ${!this.isCloud ? 'or' : ''} Project${
-          this.isCloud ? ', or User' : ''
-        } `
+        return `Search by Flow or Project`
       }
       return ''
     },
@@ -148,23 +135,9 @@ export default {
         query: query
       })
     },
-    async limit(val) {
-      if (val && val !== this.settings?.flowTableTileLimit) {
-        try {
-          await this.$apollo.mutate({
-            mutation: require('@/graphql/User/update-user-settings.gql'),
-            variables: {
-              input: { flowTableTileLimit: val }
-            }
-          })
-        } catch (error) {
-          return
-        }
-      }
-    }
   },
   mounted() {
-    this.limit = this.settings?.flowTableTileLimit || 30
+    this.limit = 30
   },
   methods: {
     async handleTableSearchInput(e) {
@@ -183,20 +156,10 @@ export default {
   apollo: {
     flows: {
       query() {
-        return require('@/graphql/Dashboard/flows.js').default(this.isCloud)
+        return require('@/graphql/Dashboard/flows.js').default()
       },
       variables() {
-        let sortBy = {}
-        if (this.sortBy) {
-          if (this.isCloud && this.sortBy.includes('created_by.username')) {
-            sortBy['created_by'] = {}
-            sortBy['created_by']['username'] = this.sortDesc ? 'desc' : 'asc'
-          } else if (Object.keys(this.sortBy) < 1) {
-            sortBy = { name: 'asc' }
-          } else {
-            sortBy[`${this.sortBy}`] = this.sortDesc ? 'desc' : 'asc'
-          }
-        }
+        let sortBy = { name: 'asc' }
 
         let searchParams = [
           { archived: { _eq: this.showArchived ? null : false } },
@@ -212,12 +175,6 @@ export default {
 
         if (this.validUUID) {
           orParams.push({ id: { _eq: this.search } })
-        }
-
-        if (this.isCloud) {
-          orParams.push({
-            created_by: { username: { _ilike: this.searchFormatted } }
-          })
         }
 
         return {
@@ -253,13 +210,7 @@ export default {
         if (this.validUUID) {
           orParams.push({ id: { _eq: this.search } })
         }
-
-        if (this.isCloud) {
-          orParams.push({
-            created_by: { username: { _ilike: this.searchFormatted } }
-          })
-        }
-
+  
         return {
           searchParams: { _and: [...searchParams, { _or: [...orParams] }] }
         }
@@ -379,12 +330,6 @@ export default {
 
         <template #item.created="{ item }">
           <truncate :content="formatTime(item.created)" />
-        </template>
-
-        <template #item.created_by.username="{ item }">
-          <truncate
-            :content="item.created_by ? item.created_by.username : null"
-          />
         </template>
 
         <!-- eslint-disable vue/no-template-shadow -->

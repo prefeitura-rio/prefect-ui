@@ -44,13 +44,13 @@ export function artifact_parser(md) {
       .use(gfm)
       .use(html, {
         handlers: {
-          heading: function(h, node) {
+          heading: function (h, node) {
             node.data = {
               hProperties: { className: ['h' + node.depth, 'mt-6'] }
             }
             return h(node, 'h' + node.depth, all(h, node))
           },
-          link: function(h, node) {
+          link: function (h, node) {
             let props = { href: normalize(node.url), target: '_blank' }
 
             if (node.title !== null && node.title !== undefined) {
@@ -72,19 +72,19 @@ export function artifact_parser(md) {
               ])
             ])
           },
-          paragraph: function(h, node) {
+          paragraph: function (h, node) {
             node.data = {
               hProperties: { className: 'text-body-1' }
             }
             return h(node, 'p', all(h, node))
           },
-          strong: function(h, node) {
+          strong: function (h, node) {
             node.data = {
               hProperties: { className: 'font-weight-medium' }
             }
             return h(node, 'span', all(h, node))
           },
-          table: function(h, node) {
+          table: function (h, node) {
             node.data = {
               hProperties: {
                 className: [
@@ -100,7 +100,7 @@ export function artifact_parser(md) {
             }
             return table(h, node)
           },
-          thematicBreak: function(h, node) {
+          thematicBreak: function (h, node) {
             node.data = {
               hProperties: { className: ['my-6'] }
             }
@@ -118,20 +118,21 @@ export function artifact_parser(md) {
 }
 
 export function getRoutes() {
-  const context = require.context('../pages/Tutorials/Markdown')
-  const obj = context
-    .keys()
-    .map(context)
-    .map((content, i) => {
-      const htmlStr = parser(content)
-      const removeSlash = context.keys()[i].replace(/\//g, '')
-      const removePeriod = removeSlash.replace(/\./, '')
-      const file = removePeriod.replace(/\.md/, '')
-      const allIds = htmlStr.match(/id="(.*?)"/gm).map(id => {
-        const getIDName = id.replace(/id="/gm, '#').replace(/^"|"$/g, '')
-        return { name: getIDName, file }
-      })
-      return { name: file, children: allIds }
-    })
-  return obj
+  // const context = require.context('../pages/Tutorials/Markdown')
+  // const obj = context
+  //   .keys()
+  //   .map(context)
+  //   .map((content, i) => {
+  //     const htmlStr = parser(content)
+  //     const removeSlash = context.keys()[i].replace(/\//g, '')
+  //     const removePeriod = removeSlash.replace(/\./, '')
+  //     const file = removePeriod.replace(/\.md/, '')
+  //     const allIds = htmlStr.match(/id="(.*?)"/gm).map(id => {
+  //       const getIDName = id.replace(/id="/gm, '#').replace(/^"|"$/g, '')
+  //       return { name: getIDName, file }
+  //     })
+  //     return { name: file, children: allIds }
+  //   })
+  // return obj
+  return null
 }

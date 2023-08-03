@@ -3,7 +3,6 @@ import DurationSpan from '@/components/DurationSpan'
 import { formatTime } from '@/mixins/formatTimeMixin'
 import FlowName from '@/pages/Calendar/FlowName'
 import ExternalLink from '@/components/ExternalLink'
-import { mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -18,9 +17,8 @@ export default {
     active: { type: Boolean, required: true }
   },
   computed: {
-    ...mapGetters('api', ['isCloud']),
     showScheduleBanner() {
-      return this.run.state === 'Scheduled' && this.active && this.isCloud
+      return this.run.state === 'Scheduled' && this.active
     }
   },
   methods: {

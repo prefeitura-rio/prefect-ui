@@ -1,5 +1,4 @@
 import { fallbackApolloClient } from '@/vue-apollo'
-import LogRocket from 'logrocket'
 
 const SERVER_KEY = `${process.env.VUE_APP_RELEASE_TIMESTAMP}_server_url`
 
@@ -13,7 +12,7 @@ const state = {
   coreVersion: null,
   releaseTimestamp: null,
   apiMode: null,
-  cloudUrl: process.env.VUE_APP_CLOUD_URL,
+  cloudUrl: process.env.VUE_APP_SERVER_URL,
   retries: 0,
   serverUrl:
     localStorage.getItem(SERVER_KEY) ||
@@ -40,12 +39,6 @@ const getters = {
   },
   connectionTimeout(state) {
     return state.connectionTimeout
-  },
-  isCloud(state) {
-    return state.backend === 'CLOUD'
-  },
-  isServer(state) {
-    return state.backend === 'SERVER'
   },
   releaseTimestamp(state) {
     return state.releaseTimestamp
@@ -160,13 +153,6 @@ const actions = {
       commit('unsetVersion')
       commit('unsetCoreVersion')
       commit('setConnected', false)
-
-      LogRocket.captureException(error, {
-        extra: {
-          pageName: 'API Store',
-          stage: 'getApi'
-        }
-      })
     }
 
     dispatch('monitorConnection')
@@ -220,20 +206,12 @@ const actions = {
     commit('tenant/unsetTenant', null, { root: true })
     commit('tenant/unsetTenants', null, { root: true })
 
-    if (backend == 'CLOUD') {
-      await dispatch('auth/authenticate', null, { root: true })
-      await dispatch('auth/authorize', null, { root: true })
-      await dispatch('user/getUser', null, { root: true })
-    }
+    await dispatch('auth/authenticate', null, { root: true })
+    await dispatch('auth/authorize', null, { root: true })
+    await dispatch('user/getUser', null, { root: true })
 
     await dispatch('getApi')
     await dispatch('tenant/getTenants', null, { root: true })
-
-    if (backend == 'SERVER') {
-      commit('tenant/setDefaultTenant', rootGetters['tenant/tenants']?.[0], {
-        root: true
-      })
-    }
 
     if (rootGetters['tenant/defaultTenant']?.slug) {
       await dispatch(

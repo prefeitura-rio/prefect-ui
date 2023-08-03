@@ -6,7 +6,6 @@ import ManagementLayout from '@/layouts/ManagementLayout'
 import { cloudHookMixin } from '@/mixins/cloudHookMixin'
 import CloudHookForm from '@/components/CloudHookForm'
 import CardTitle from '@/components/Card-Title'
-import LogRocket from 'logrocket'
 
 export default {
   components: {
@@ -79,7 +78,6 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant', 'role']),
-    ...mapGetters('license', ['hasPermission']),
     isLoadingTable() {
       return this.hooksLoaded
     },
@@ -147,12 +145,6 @@ export default {
           }
         }, 500)
       } catch (e) {
-        LogRocket.captureException(e, {
-          extra: {
-            pageName: 'Flow Settings',
-            stage: 'Test Cloud Hook'
-          }
-        })
         this.setAlert(
           {
             alertShow: true,
@@ -204,12 +196,6 @@ export default {
           }
         }, 1000)
       } catch (e) {
-        LogRocket.captureException(e, {
-          extra: {
-            pageName: 'Cloud Hooks',
-            stage: 'Delete Cloud Hook'
-          }
-        })
         this.removingHook = false
         this.setAlert(
           {
@@ -259,14 +245,7 @@ export default {
   <ManagementLayout show control-show>
     <template #title>Cloud Hooks</template>
     <template #subtitle>
-      <div v-if="!hasPermission('update', 'cloud-hook')">
-        View your team's
-        <ExternalLink
-          href="https://docs.prefect.io/orchestration/concepts/cloud_hooks.html"
-          >Cloud Hooks
-        </ExternalLink>
-      </div>
-      <div v-else>
+      <div>
         View and manage your team's
         <ExternalLink
           href="https://docs.prefect.io/orchestration/concepts/cloud_hooks.html"
@@ -276,7 +255,7 @@ export default {
       </div>
     </template>
 
-    <template v-if="hasPermission('create', 'cloud-hook')" #cta>
+    <template #cta>
       <v-dialog v-model="createNewCloudHook" max-width="700">
         <template #activator="{ onD }">
           <v-tooltip top>
@@ -293,10 +272,7 @@ export default {
                 </v-btn>
               </div>
             </template>
-            <span v-if="!hasPermission('create', 'cloud-hook')">
-              You don't have permission to create new Cloud Hooks.
-            </span>
-            <span v-else>
+            <span>
               Create a new Cloud Hook
             </span>
           </v-tooltip>
@@ -308,10 +284,7 @@ export default {
           <v-card-text class="pl-12">
             <CloudHookForm
               v-if="createNewCloudHook"
-              :editable="
-                hasPermission('create', 'cloud-hook') &&
-                  hasPermission('delete', 'cloud-hook')
-              "
+              :editable="true"
               edit-on-render
               @close="createNewCloudHook = false"
               @update="$apollo.queries.cloudHooks.refetch()"
@@ -444,11 +417,7 @@ export default {
                     class="v-input--vertical mt-0"
                     color="primary"
                     :loading="item.loading"
-                    :disabled="
-                      (!hasPermission('create', 'cloud-hook') &&
-                        !hasPermission('delete', 'cloud-hook')) ||
-                        item.loading
-                    "
+                    :disabled="item.loading"
                     @change="_handleSetCloudHookStatusChange($event, item)"
                   >
                     <template #label>
@@ -460,10 +429,7 @@ export default {
                 </div>
               </div>
             </template>
-            <span v-if="!hasPermission('update', 'cloud-hook')">
-              You don't have permission to change Cloud Hook states.
-            </span>
-            <span v-else>
+            <span>
               {{ item.active ? 'Deactivate' : 'Activate' }}
               this Cloud Hook.
             </span>
@@ -488,10 +454,6 @@ export default {
           </v-tooltip>
         </template>
         <template
-          v-if="
-            hasPermission('create', 'cloud-hook') &&
-              hasPermission('delete', 'cloud-hook')
-          "
           #item.action="{ item }"
         >
           <v-tooltip bottom>
@@ -575,10 +537,7 @@ export default {
           <v-card-text class="pl-12">
             <CloudHookForm
               v-if="dialogEditHook"
-              :editable="
-                hasPermission('create', 'cloud-hook') &&
-                  hasPermission('delete', 'cloud-hook')
-              "
+              :editable="true"
               edit-on-render
               :hook="selectHook"
               show-controls

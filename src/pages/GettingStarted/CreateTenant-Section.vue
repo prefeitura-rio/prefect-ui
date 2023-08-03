@@ -13,7 +13,6 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant', 'tenants'])
   },
   methods: {
@@ -75,7 +74,7 @@ export default {
       <li value="1" class="text-h6 mt-6 mb-2">Set backend</li>
       <div class="text-body-1 mt-2">
         First, make sure Prefect is working against
-        {{ isCloud ? 'Prefect Cloud' : 'your Prefect Server' }}
+        {{ 'Prefect' }}
       </div>
 
       <div
@@ -88,7 +87,7 @@ export default {
           </span>
           <span class="primary--text font-weight-medium">prefect</span>
           backend<span class="deepRed--text font-weight-medium">
-            {{ isCloud ? 'cloud' : 'server' }}
+            {{ ''}}
           </span>
         </div>
       </div>

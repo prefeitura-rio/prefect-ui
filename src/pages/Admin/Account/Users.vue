@@ -3,7 +3,6 @@ import { teamProfileMixin } from '@/mixins/teamProfileMixin.js'
 import UpgradeAlert from '@/components/License/UpgradeAlert'
 // import { paymentMixin } from '@/mixins/paymentMixin.js'
 import { mapGetters, mapActions } from 'vuex'
-import LogRocket from 'logrocket'
 
 export default {
   components: { UpgradeAlert },
@@ -134,12 +133,6 @@ export default {
           this.loading = false
         }
       } catch (e) {
-        LogRocket.captureException(e, {
-          extra: {
-            pageName: 'users',
-            stage: 'update license'
-          }
-        })
         this.loading = false
         this.cardError = 'There was a problem updating your license'
       }
@@ -150,9 +143,7 @@ export default {
       this.diff = 0
 
       await this.getUser()
-      const tenantSlug = this.user.memberships.filter(
-        membership => membership.tenant.id === this.tenant.id
-      )?.tenant?.slug
+      const tenantSlug = this.tenant.slug
 
       if (tenantSlug) {
         this.setCurrentTenant(tenantSlug)

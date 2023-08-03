@@ -1,5 +1,4 @@
 <script>
-import LogRocket from 'logrocket'
 import { mapActions, mapGetters } from 'vuex'
 import { pollsTenantsMixin } from '@/mixins/polling/pollsTenantsMixin'
 import { clearCache } from '@/vue-apollo'
@@ -156,7 +155,7 @@ export default {
         if (e?.toString().includes('Uniqueness violation')) {
           this.slugErrors = ['Sorry, that URL slug is already in use.']
         } else {
-          LogRocket.captureException(e)
+          console.error(e)
         }
         // eslint-disable-next-line no-console
         console.error(e)

@@ -23,12 +23,12 @@ export default {
   computed: {
     ...mapGetters('license', ['license']),
     ...mapGetters('tenant', ['tenant']),
-    ...mapGetters('license', ['license', 'hasPermission']),
+    ...mapGetters('license', ['license']),
     existingCard() {
       return this.tenant?.stripe_customer?.sources?.data[0]?.card
     },
     permissionsCheck() {
-      return this.hasPermission('create', 'license')
+      return true
     },
     isSelfServe() {
       return (

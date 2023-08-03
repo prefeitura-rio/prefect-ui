@@ -73,7 +73,7 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant']),
-    ...mapGetters('license', ['license', 'hasPermission']),
+    ...mapGetters('license', ['license']),
     maxKVCount() {
       return this.license?.terms?.key_value_pairs
     },
@@ -330,7 +330,7 @@ export default {
         Manage your team's key/value store
       </template>
 
-      <template v-if="hasPermission('create', 'key-value') && maxKVCount" #cta>
+      <template v-if="maxKVCount" #cta>
         <v-btn
           color="primary"
           class="white--text"
@@ -353,19 +353,6 @@ export default {
       </template>
 
       <template #alerts>
-        <v-alert
-          v-if="!hasPermission('create', 'key-value')"
-          class="mx-auto"
-          border="left"
-          colored-border
-          elevation="2"
-          type="warning"
-          tile
-          icon="lock"
-          max-width="380"
-        >
-          You don't have permission to manage kv.
-        </v-alert>
 
         <v-alert
           v-if="!maxKVCount"
@@ -383,19 +370,6 @@ export default {
         </v-alert>
       </template>
 
-      <v-text-field
-        v-if="
-          !$vuetify.breakpoint.mdAndUp && !hasPermission('create', 'key-value')
-        "
-        v-model="search"
-        class="rounded-0 elevation-1 mb-1"
-        solo
-        dense
-        hide-details
-        single-line
-        placeholder="Search for a key"
-        prepend-inner-icon="search"
-      ></v-text-field>
     </ManagementLayout>
     <v-card v-if="maxKVCount" tile class="mx-auto">
       <v-card-text class="pa-0">
@@ -484,7 +458,6 @@ export default {
             <v-tooltip bottom>
               <template #activator="{ on }">
                 <v-btn
-                  v-if="hasPermission('update', 'key-value')"
                   text
                   fab
                   x-small
@@ -504,7 +477,6 @@ export default {
             <v-tooltip bottom>
               <template #activator="{ on }">
                 <v-btn
-                  v-if="hasPermission('delete', 'key-value')"
                   text
                   fab
                   x-small

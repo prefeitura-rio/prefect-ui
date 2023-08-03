@@ -25,7 +25,6 @@ export default {
       'license',
       'planType',
       'allowedUsers',
-      'hasPermission'
     ]),
     ...mapGetters('tenant', ['tenant']),
     isSelfServe() {
@@ -195,9 +194,7 @@ export default {
         <v-btn
           v-if="
             isSelfServe &&
-              !planType('FREE') &&
-              hasPermission('create', 'license') &&
-              hasPermission('delete', 'license')
+              !planType('FREE')
           "
           class="mr-1 blue-grey--text"
           text

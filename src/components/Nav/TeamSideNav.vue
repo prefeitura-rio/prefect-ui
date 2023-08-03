@@ -32,8 +32,6 @@ export default {
 
   computed: {
     ...mapGetters('api', [
-      'isServer',
-      'isCloud',
       'version',
       'releaseTimestamp',
       'coreVersion'
@@ -75,7 +73,7 @@ export default {
     },
     logoAlt() {
       return require(`@/assets/logos/${
-        this.isCloud ? 'cloud' : 'core'
+        'cloud'
       }-logo-no-text.svg`)
     }
   },
@@ -342,12 +340,6 @@ export default {
               <div>{{ lastDeployment_UI }}</div>
             </div>
             <div class="flex-grow-1">
-              <div v-show="coreVersion && isServer" class="text-center mb-2">
-                <div class="utilGrayMid--text font-weight-light">
-                  Core Version
-                </div>
-                <div>{{ coreVersion }}</div>
-              </div>
               <v-img
                 max-height="100"
                 width="40px"
