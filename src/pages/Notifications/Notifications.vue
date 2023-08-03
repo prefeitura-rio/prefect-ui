@@ -5,7 +5,6 @@ import NotificationGroup from '@/pages/Notifications/NotificationGroup'
 import NotificationsLayout from '@/layouts/NotificationsLayout'
 import SubPageNav from '@/layouts/SubPageNav'
 import gql from 'graphql-tag'
-import LogRocket from 'logrocket'
 
 export default {
   components: {
@@ -178,12 +177,7 @@ export default {
           this.selected = []
         }
       } catch (e) {
-        LogRocket.error(e, {
-          extra: {
-            pageName: 'Notifications',
-            stage: 'Deleting notifications'
-          }
-        })
+        console.error(e)
       }
 
       this.loading--
@@ -222,12 +216,7 @@ export default {
           this.selected = []
         }
       } catch (e) {
-        LogRocket.error(e, {
-          extra: {
-            pageName: 'Notifications',
-            stage: 'Marking notifications as read'
-          }
-        })
+        console.error(e)
       }
 
       this.loading--
@@ -266,12 +255,7 @@ export default {
           this.selected = []
         }
       } catch (e) {
-        LogRocket.error(e, {
-          extra: {
-            pageName: 'Notifications',
-            stage: 'Marking notifications as unread'
-          }
-        })
+        console.error(e)
       }
 
       this.loading--

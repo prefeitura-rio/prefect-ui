@@ -1,5 +1,4 @@
 <script>
-import LogRocket from 'logrocket'
 import { mapGetters } from 'vuex'
 
 const categories = [
@@ -62,12 +61,6 @@ export default {
         this.error = !data?.send_feedback?.success
       } catch (e) {
         this.error = true
-        LogRocket.captureException(e, {
-          extra: {
-            pageName: 'Support',
-            stage: 'Form Submit'
-          }
-        })
       }
 
       this.loading = false

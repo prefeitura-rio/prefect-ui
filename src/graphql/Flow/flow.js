@@ -1,6 +1,6 @@
 import gql from 'graphql-tag'
 
-export default function(isCloud) {
+export default function () {
   return gql`
     query Flow($id: uuid!) {
       flow_group_by_pk(id: $id) {
@@ -11,23 +11,13 @@ export default function(isCloud) {
         name
         default_parameters
         schedule
-        
+
         flows {
           id
 
           archived
           core_version
           created
-
-          ${
-            isCloud
-              ? `
-              created_by {
-                id
-                username
-              }`
-              : ''
-          }
 
           description
           run_config
@@ -56,5 +46,5 @@ export default function(isCloud) {
         updated
       }
     }
-`
+  `
 }

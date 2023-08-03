@@ -33,7 +33,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('license', ['permissions', 'hasPermission'])
+    ...mapGetters('license', ['permissions'])
   },
   watch: {
     hooks() {
@@ -85,20 +85,7 @@ export default {
 </script>
 
 <template>
-  <div
-    v-if="!hasPermission('read', 'hook')"
-    v-intersect="{ handler: onIntersect }"
-  >
-    <v-row>
-      <v-col cols="12" class="text-center text-h6 pa-12">
-        You do not have access to Automations. If you'd like to be able to
-        create automations that notify you (or even cancel your run) when
-        there's a change in your agent or a run,
-        <router-link :to="{ name: 'plans' }">upgrade</router-link> your account.
-      </v-col>
-    </v-row>
-  </div>
-  <div v-else>
+  <div>
     <v-row>
       <v-col class="pb-0" cols="12">
         <div class="text-overline">New Automation</div>
@@ -106,7 +93,7 @@ export default {
 
       <v-col cols="12">
         <AddAutoCard
-          v-if="!!hasPermission('create', 'hook') && !closeCard"
+          v-if="!closeCard"
           @refresh="handleRefresh"
           @refetch="handleRefetch"
           @saving="loadCards = true"
@@ -137,7 +124,7 @@ export default {
         ><AutoCard
           v-else
           :hook="hook"
-          :can-edit="!!hasPermission('create', 'hook')"
+          :can-edit="true"
           @open-edit="handleEdit(hook, i)"
           @refetch="handleRefetch"
           @done="handleDone"

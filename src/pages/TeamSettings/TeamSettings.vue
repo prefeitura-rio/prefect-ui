@@ -1,10 +1,6 @@
 <script>
 import { mapMutations, mapGetters } from 'vuex'
-import UpgradeBadge from '@/components/UpgradeBadge'
 export default {
-  components: {
-    UpgradeBadge
-  },
   data() {
     return {
       // Delete team
@@ -28,9 +24,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant', 'role']),
-    ...mapGetters('license', ['hasPermission'])
   },
   watch: {
     tenant() {
@@ -112,7 +106,7 @@ export default {
 
       <v-list dense>
         <v-list-item
-          :disabled="!isCloud"
+          :disabled="false"
           :to="{ name: 'tokens', params: { tenant: tenant.slug } }"
           data-cy="team-settings-api-tokens"
           ripple
@@ -127,7 +121,7 @@ export default {
         </v-list-item>
 
         <v-list-item
-          :disabled="!isCloud"
+          :disabled="false"
           :to="{ name: 'actions', params: { tenant: tenant.slug } }"
           ripple
           exact
@@ -155,7 +149,7 @@ export default {
         </v-list-item>
 
         <v-list-item
-          :disabled="!isCloud"
+          :disabled="false"
           :to="{ name: 'flow-concurrency', params: { tenant: tenant.slug } }"
           ripple
           exact
@@ -183,7 +177,7 @@ export default {
         </v-list-item>
 
         <v-list-item
-          :disabled="!isCloud"
+          :disabled="false"
           :to="{ name: 'kv', params: { tenant: tenant.slug } }"
           ripple
           exact
@@ -200,7 +194,7 @@ export default {
         </v-list-item>
 
         <v-list-item
-          :disabled="!isCloud"
+          :disabled="false"
           :to="{ name: 'members', params: { tenant: tenant.slug } }"
           ripple
           exact
@@ -228,7 +222,7 @@ export default {
         </v-list-item>
 
         <v-list-item
-          :disabled="!isCloud || !hasPermission('feature', 'custom-role')"
+          :disabled="false"
           :to="{ name: 'roles', params: { tenant: tenant.slug } }"
           ripple
           exact
@@ -239,20 +233,12 @@ export default {
           <v-list-item-content>
             <v-list-item-title
               >Roles
-              <UpgradeBadge
-                v-if="isCloud && !hasPermission('feature', 'custom-role')"
-                inline
-                depressed
-              >
-                <span class="font-weight-medium">Custom Roles</span> are only
-                available on Enterprise plans.
-              </UpgradeBadge>
             </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
 
         <v-list-item
-          :disabled="!isCloud"
+          :disabled="false"
           :to="{ name: 'secrets', params: { tenant: tenant.slug } }"
           ripple
           exact
@@ -266,7 +252,7 @@ export default {
         </v-list-item>
 
         <v-list-item
-          :disabled="!isCloud"
+          :disabled="false"
           :to="{ name: 'service-accounts', params: { tenant: tenant.slug } }"
           ripple
           exact
@@ -280,7 +266,7 @@ export default {
         </v-list-item>
 
         <v-list-item
-          :disabled="!isCloud"
+          :disabled="false"
           :to="{ name: 'task-concurrency', params: { tenant: tenant.slug } }"
           ripple
           exact
@@ -294,30 +280,6 @@ export default {
           </v-list-item-content>
         </v-list-item>
       </v-list>
-
-      <template #append>
-        <v-list dense>
-          <v-list-item
-            v-if="false && hasPermission('delete', 'tenant')"
-            :ripple="false"
-          >
-            <v-list-item-content v-if="$vuetify.breakpoint.mdAndUp">
-              <v-btn
-                color="red"
-                class="ma-auto d-block mb-6 px-12"
-                dark
-                depressed
-                @click="deleteTeamDialog = true"
-              >
-                Delete Team
-              </v-btn>
-            </v-list-item-content>
-            <v-list-item-action v-else-if="$vuetify.breakpoint.smAndDown">
-              <v-icon color="red">remove_circle</v-icon>
-            </v-list-item-action>
-          </v-list-item>
-        </v-list>
-      </template>
     </v-navigation-drawer>
 
     <div
@@ -330,62 +292,6 @@ export default {
         <router-view></router-view>
       </v-fade-transition>
     </div>
-
-    <template v-if="false && hasPermission('delete', 'tenant')">
-      <v-dialog v-model="deleteTeamDialog" max-width="600">
-        <v-card>
-          <v-card-title class="text-h5 word-break-normal mb-3">
-            Delete
-            <span class="font-weight-bold blue--text ml-2">
-              {{ tenant.name }}
-            </span>
-            ?
-          </v-card-title>
-          <v-card-text>
-            This will remove all of your team's flows, tasks, schematics, runs,
-            and logs.
-            <div class="font-weight-bold">This can't be undone.</div>
-
-            <div class="mt-10">
-              <div>
-                To confirm, type your team's name below:
-              </div>
-              <v-form v-model="deleteTeamFormValid">
-                <v-text-field
-                  v-if="hasPermission('delete', 'tenant')"
-                  v-model="teamName"
-                  autocomplete="off"
-                  :label="tenant.name"
-                  single-line
-                  :rules="[rules.required, rules.nameMatches]"
-                  color="primary"
-                  :loading="deleteTeamLoading"
-                >
-                </v-text-field>
-              </v-form>
-            </div>
-          </v-card-text>
-          <v-card-actions class="pb-4 px-6">
-            <span v-if="deleteTeamError" class="error--text text-body-2">
-              {{ deleteTeamError }}
-            </span>
-            <v-spacer></v-spacer>
-            <v-btn depressed color="primary" @click="_closeTeamDialog">
-              Cancel
-            </v-btn>
-            <v-btn
-              color="red--text darken-1"
-              depressed
-              :disabled="!deleteTeamFormValid"
-              :loading="deleteTeamLoading"
-              @click="deleteTeam"
-            >
-              Delete
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-    </template>
   </v-container>
 </template>
 

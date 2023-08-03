@@ -5,7 +5,6 @@ import ConfirmDialog from '@/components/ConfirmDialog'
 import CronClock from '@/components/Functional/CronClock'
 import ExternalLink from '@/components/ExternalLink'
 import IntervalClock from '@/components/Functional/IntervalClock'
-import LogRocket from 'logrocket'
 import ClockForm from '@/pages/Flow/Settings/ClockForm'
 import { parametersMixin } from '@/mixins/parametersMixin.js'
 export default {
@@ -41,7 +40,6 @@ export default {
   },
   computed: {
     ...mapGetters('user', ['timezone']),
-    ...mapGetters('license', ['hasPermission']),
 
     flowClocks() {
       return this.flow.schedule?.clocks.map(c => {
@@ -208,12 +206,6 @@ export default {
           this.error = result?.data?.set_flow_group_schedule.error
         }
       } catch (e) {
-        LogRocket.captureException(e, {
-          extra: {
-            pageName: 'Flow Settings - Schedules',
-            stage: 'Modifying schedules'
-          }
-        })
         this.error = e
       }
 
@@ -272,7 +264,6 @@ export default {
         :class="{ 'grid-container-large': selectedClock === -1 }"
       >
         <v-card
-          v-if="hasPermission('create', 'run')"
           class="clock-card"
           :class="{ 'clock-card-large': selectedClock === -1 }"
           :style="{ 'pointer-events': selectedClock === -1 ? 'none' : 'auto' }"
@@ -578,7 +569,6 @@ export default {
                   >
                     <template #activator="{ on }">
                       <v-btn
-                        v-if="hasPermission('update', 'run')"
                         icon
                         fab
                         class="my-1"
@@ -603,7 +593,6 @@ export default {
                   >
                     <template #activator="{ on }">
                       <v-btn
-                        v-if="hasPermission('delete', 'run')"
                         icon
                         fab
                         class="mt-1"

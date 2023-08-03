@@ -115,14 +115,6 @@ export const routes = [
           )
       },
       {
-        name: 'members',
-        path: 'members',
-        component: () =>
-          import(
-            /* webpackChunkName: "team-settings--members" */ '@/pages/TeamSettings/Members.vue'
-          )
-      },
-      {
         name: 'roles',
         path: 'roles',
         component: () =>
@@ -258,7 +250,7 @@ export const routes = [
   {
     name: 'pagerduty',
     path: '/:tenant?/pagerduty/:config?',
-    props: route => ({ pdData: route.query.config }),
+    props: (route) => ({ pdData: route.query.config }),
     beforeEnter(to, from, next) {
       if (to?.query?.config) next()
       else next('/')
@@ -341,20 +333,6 @@ export const routes = [
         path: '',
         component: () =>
           import(/* webpackChunkName: "login" */ '@/pages/Auth/SignIn.vue')
-      },
-      {
-        name: 'sign-up',
-        path: 'sign-up',
-        component: () =>
-          import(/* webpackChunkName: "sign-up" */ '@/pages/Auth/SignUp.vue')
-      },
-      {
-        name: 'forgot-password',
-        path: 'forgot-password',
-        component: () =>
-          import(
-            /* webpackChunkName: "forgot-password" */ '@/pages/Auth/ForgotPassword.vue'
-          )
       }
     ]
   },
@@ -367,19 +345,6 @@ export const routes = [
   {
     path: '/accept',
     redirect: 'welcome/accept'
-  },
-  // --------------------------- //
-  //
-  // Tutorials
-  //
-  // --------------------------- //
-  {
-    name: 'tutorial',
-    path: '/tutorial/:id?',
-    component: () =>
-      import(
-        /* webpackChunkName: "tutorials" */ '@/pages/Tutorials/Tutorials.vue'
-      )
   },
   {
     name: 'notifications',
@@ -427,14 +392,6 @@ export const routes = [
             component: () =>
               import(
                 /* webpackChunkName: "admin--teams-overview" */ '@/pages/Admin/Teams/TeamsOverview.vue'
-              )
-          },
-          {
-            name: 'new',
-            path: 'new',
-            component: () =>
-              import(
-                /* webpackChunkName: "admin--new-team" */ '@/pages/Admin/Teams/NewTeam.vue'
               )
           }
         ]

@@ -9,7 +9,6 @@ export default {
     schedule: {
       required: true,
       type: Object,
-      validator: schedule => schedule.type
     }
   },
   computed: {

@@ -10,8 +10,7 @@
           info
         </v-icon>
       </template>
-      System time according to your set Timezone; you can change this from your
-      Account Settings.
+      System time according to your IP's timezone
     </v-tooltip>
   </div>
 </template>

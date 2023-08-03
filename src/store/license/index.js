@@ -1,5 +1,4 @@
 import { fallbackApolloClient } from '@/vue-apollo'
-import LogRocket from 'logrocket'
 
 const state = {
   license: null,
@@ -21,17 +20,13 @@ const getters = {
   tempLicenseType(state) {
     return state.tempLicenseType
   },
-  planType: state => type => {
+  planType: (state) => (type) => {
     if (type) {
       return state.license?.terms?.plan.includes(type)
     }
     return state.license?.terms?.plan
   },
-  hasPermission: state => (operation, ref) => {
-    if (process.env.VUE_APP_BACKEND !== 'CLOUD') return true
-    return state.permissions?.includes(`${operation}:${ref}`)
-  },
-  allowedUsers: state => type => {
+  allowedUsers: (state) => (type) => {
     if (type === 'read') {
       return state.license?.terms?.read_only_users
     }
@@ -86,12 +81,6 @@ const actions = {
       commit('unsetPermissions')
       // eslint-disable-next-line no-console
       console.log(error)
-      LogRocket.captureException(error, {
-        extra: {
-          pageName: 'LicenseStore',
-          stage: 'getLicense'
-        }
-      })
     }
   }
 }

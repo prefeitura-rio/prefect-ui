@@ -101,9 +101,7 @@ export default {
   apollo: {
     notifications: {
       query() {
-        return require('@/graphql/Notifications/notifications.js').default(
-          this.isCloud
-        )
+        return require('@/graphql/Notifications/notifications.js')
       },
       variables() {
         return {

@@ -62,12 +62,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('api', ['isCloud']),
     ...mapGetters('user', ['user']),
     ...mapGetters('tenant', ['tenant']),
-    ...mapGetters('license', ['hasPermission']),
     permissionsCheck() {
-      return this.hasPermission('create', 'hook')
+      return true
     },
     headersByViewport() {
       return this.$vuetify.breakpoint.mdAndUp

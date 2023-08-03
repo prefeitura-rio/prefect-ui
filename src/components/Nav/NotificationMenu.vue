@@ -17,7 +17,7 @@ export default {
   },
   apollo: {
     notificationsCount: {
-      query: require('@/graphql/Notifications/notifications-count-unread.gql'),
+      query: /Notifications/notifications-count-unread.gql'),
       loadingKey: 'loading',
       update: data => data?.message_aggregate?.aggregate?.count,
       fetchPolicy: 'no-cache',

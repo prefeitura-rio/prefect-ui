@@ -8,7 +8,6 @@ export default {
   computed: {
     ...mapGetters('sideNav', ['isOpen']),
     ...mapGetters('tenant', ['tenant']),
-    ...mapGetters('user', ['invitations']),
     size() {
       return this.$vuetify.breakpoint.mdAndUp ? (this.isOpen ? 325 : 225) : 175
     }
@@ -40,12 +39,6 @@ export default {
       <div class="text-truncate">
         {{ tenant.name }}
       </div>
-      <v-badge
-        inline
-        :value="invitations && invitations.length"
-        :content="invitations && invitations.length"
-        color="accentPink"
-      />
     </div>
     <v-icon class="flex-shrink-0">
       {{ isOpen ? 'chevron_left' : 'chevron_right' }}

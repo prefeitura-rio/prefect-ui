@@ -44,7 +44,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('api', ['connected', 'isCloud']),
+    ...mapGetters('api', ['connected']),
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['timezone']),
     intervalCount() {
@@ -184,13 +184,8 @@ export default {
       })
     },
     showScheduleBanner() {
-      if (this.closeBanner || !this.isCloud) {
-        this.scheduleBanner = false
-      } else if (this.flow?.is_schedule_active && this.upcoming > 8) {
-        this.scheduleBanner = true
-      } else {
-        this.scheduleBanner = new Date(this.date) > new Date()
-      }
+      
+      this.scheduleBanner = false
     },
     eventColor(event) {
       return event.state ? event.state : 'primary'

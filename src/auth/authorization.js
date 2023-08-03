@@ -1,4 +1,5 @@
 import { Client } from '@/apollo.js'
+const { VUE_APP_SERVER_URL } = process.env
 
 const client = Client('authorization')
 
@@ -7,7 +8,7 @@ const headers = {
   'X-Backend': 'cloud'
 }
 
-export const authorize = async idToken => {
+export const authorize = async (idToken) => {
   if (!idToken) {
     throw new Error('No ID token passed to authorize')
   }
@@ -54,21 +55,21 @@ export const authorizeTenant = async (accessToken, tenantId) => {
     throw new Error('No access token or no tenant id passed to authorizeTenant')
   }
 
-  const res = await client.mutate({
-    mutation: require('@/graphql/Tenant/tenant-token.gql'),
-    variables: {
-      tenantId: tenantId
-    },
-    context: {
+  const res = await fetch(
+    new URL(`/user/me/tenant/${tenantId}`, VUE_APP_SERVER_URL),
+    {
+      method: 'POST',
       headers: {
-        ...headers,
         authorization: `Bearer ${accessToken}`
       }
-    },
-    fetchPolicy: 'no-cache'
-  })
+    }
+  )
 
-  return res?.data?.switch_tenant
+  const data = await res.json()
+
+  if (res.status === 200 && data?.success) return accessToken
+
+  throw new Error('Failed to switch tenant')
 }
 
 export const revokeTokens = async (accessToken, refreshToken) => {

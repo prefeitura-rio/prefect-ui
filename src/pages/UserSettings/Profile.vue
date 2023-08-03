@@ -1,6 +1,6 @@
 <script>
 import moment from 'moment-timezone'
-import { mapActions, mapGetters, mapMutations } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 import Alert from '@/components/Alert'
 import ManagementLayout from '@/layouts/ManagementLayout.vue'
@@ -48,7 +48,6 @@ export default {
     this.updatedLastName = this.lastName
   },
   methods: {
-    ...mapMutations('user', ['setUserSettings']),
     ...mapActions('user', ['getUser']),
     handleAlert(type, message) {
       this.alertMessage = message
@@ -56,26 +55,7 @@ export default {
       this.alertShow = true
     },
     async updateTZ() {
-      let settings = { timezone: this.selectedTimezone }
-
-      if (this.user) {
-        settings = { ...this.user.settings, ...settings }
-      }
-
-      this.setUserSettings(settings)
-
-      try {
-        await this.$apollo.mutate({
-          mutation: require('@/graphql/User/update-user-settings.gql'),
-          variables: {
-            input: settings
-          }
-        })
-        return true
-      } catch (error) {
-        this.handleAlert('error', ERROR_ALERT)
-        return false
-      }
+      return true
     },
     async updateUserDetails() {
       try {

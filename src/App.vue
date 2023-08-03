@@ -1,12 +1,9 @@
 <script>
 import Alert from '@/components/Alert'
-import Footer from '@/components/Footer'
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 import { clearCache } from '@/vue-apollo'
 import moment from 'moment'
-// import { authMixin } from '@/mixins/authMixin'
 import ApplicationNavBar from '@/components/Nav/ApplicationNav'
-import GlobalSearch from '@/components/GlobalSearchBar/GlobalSearch'
 import TeamSideNav from '@/components/Nav/TeamSideNav'
 import WorkQueueBanner from '@/components/WorkQueueBanner'
 import { eventsMixin } from '@/mixins/eventsMixin'
@@ -31,7 +28,7 @@ const onboardRoutes = ['welcome', 'name-team', 'onboard-resources', 'accept']
 export default {
   metaInfo() {
     return {
-      title: `Prefect ${this.backend == 'CLOUD' ? 'Cloud' : 'Server'}`,
+      title: "Prefect",
       link: [
         {
           rel: 'icon',
@@ -44,8 +41,6 @@ export default {
   components: {
     Alert,
     ApplicationNavBar,
-    Footer,
-    GlobalSearch,
     TeamSideNav,
     VSnackbars,
     WorkQueueBanner
@@ -71,8 +66,6 @@ export default {
       'url',
       'connected',
       'connecting',
-      'isServer',
-      'isCloud'
     ]),
     ...mapGetters('alert', ['getAlert']),
     ...mapGetters('data', ['projects', 'flows']),
@@ -86,7 +79,6 @@ export default {
     ]),
     ...mapGetters('user', [
       'isDark',
-      'memberships',
       'userIsSet',
       'user',
       'plan'
@@ -116,12 +108,9 @@ export default {
       )
         return false
       return (
-        ((this.isCloud && this.isAuthenticated) || this.isServer) &&
+        (this.isAuthenticated) &&
         this.loadedComponents > 0
       )
-    },
-    isCloud() {
-      return this.backend == 'CLOUD'
     },
     isWelcome() {
       return (
@@ -132,7 +121,7 @@ export default {
       )
     },
     paused() {
-      return this.tenant?.settings?.work_queue_paused
+      return false
     }
   },
   watch: {
@@ -161,26 +150,7 @@ export default {
     },
     tenant(val, oldVal) {
       if (val?.id !== oldVal?.id) {
-        if (localStorage.getItem('haltTenantRouting')) {
-          localStorage.removeItem('haltTenantRouting')
-          return
-        }
-
-        if (this.isCloud && !this.tenant.settings.teamNamed) {
-          this.$router.push({
-            name: 'welcome',
-            params: {
-              tenant: this.tenant.slug
-            }
-          })
-        }
-
-        clearTimeout(this.refreshTimeout)
-        this.refresh()
-        this.resetData()
-        this.$apollo.queries.agents.refresh()
-        this.$apollo.queries.projects.refresh()
-        this.$apollo.queries.flows.refresh()
+        this.$router.push({ name: 'dashboard', params: { tenant: val.slug } })
       }
     },
     '$route.params.tenant'(value, previous) {
@@ -220,21 +190,17 @@ export default {
 
     this.refresh()
 
-    if (this.isAuthorized || this.isServer) {
+    if (this.isAuthorized) {
       await this.getApi()
-
-      if (!this.connected && this.isServer) {
-        this.$router.push({ name: 'getting-started' })
-      }
     }
 
     this.$globalApolloQueries['tenants'] = this.$apollo.addSmartQuery(
       'tenants',
       {
-        query: require('@/graphql/Tenant/tenants.js').default(this.isCloud),
+        query: require('@/graphql/Tenant/tenants.js').default(),
         skip() {
           return (
-            (this.isCloud && !this.isAuthorized) ||
+            (!this.isAuthorized) ||
             !this.connected ||
             !this.shouldPollTenants
           )
@@ -251,11 +217,11 @@ export default {
 
     this.$globalApolloQueries['agents'] = this.$apollo.addSmartQuery('agents', {
       query() {
-        return require('@/graphql/Agent/agents.js').default(this.isCloud)
+        return require('@/graphql/Agent/agents.js').default()
       },
       skip() {
         return (
-          (this.isCloud && !this.isAuthorized) ||
+          (!this.isAuthorized) ||
           !this.connected ||
           !this.shouldPollAgents
         )
@@ -278,7 +244,7 @@ export default {
         },
         skip() {
           return (
-            (this.isCloud && !this.isAuthorized) ||
+            (!this.isAuthorized) ||
             !this.connected ||
             !this.shouldPollProjects
           )
@@ -298,7 +264,7 @@ export default {
       },
       skip() {
         return (
-          (this.isCloud && !this.isAuthorized) ||
+          (!this.isAuthorized) ||
           !this.connected ||
           !this.shouldPollFlows
         )
@@ -314,31 +280,6 @@ export default {
       }
     })
 
-    this.$globalApolloQueries['memberships'] = this.$apollo.addSmartQuery(
-      'memberships',
-      {
-        query: require('@/graphql/User/user.gql'),
-        skip() {
-          return (
-            !this.isCloud ||
-            !this.isAuthorized ||
-            !this.memberships ||
-            !this.user ||
-            !this.user.email ||
-            !this.tenantIsSet
-          )
-        },
-        fetchPolicy: 'no-cache',
-        pollInterval: 60000,
-        update(data) {
-          if (!data?.user?.[0]) return []
-          this.setUser(data.user[0])
-
-          return data.user[0]
-        }
-      }
-    )
-
     this.$globalApolloQueries[
       'membershipInvitations'
     ] = this.$apollo.addSmartQuery('membershipInvitations', {
@@ -350,9 +291,7 @@ export default {
       },
       skip() {
         return (
-          !this.isCloud ||
           !this.isAuthorized ||
-          !this.memberships ||
           !this.user ||
           !this.user.email ||
           !this.tenantIsSet
@@ -377,41 +316,23 @@ export default {
       this.$vuetify.theme.dark = false
     }
 
-    if (this.isCloud) {
-      if (
-        window.location.pathname?.includes('logout') ||
-        window.location.pathname?.includes('access-denied')
-      )
-        return
-
-      // If the application has loaded but the user isn't authenticated, authorized, or has no tenant
-      // redirect them to the help screen
-      if (!this.isAuthorized || !this.isAuthenticated || !this.tenant?.id) {
-        this.$router.push({
-          name: 'access-denied',
-          params: {
-            tenant: this.tenant.slug
-          }
-        })
-
-        // otherwise, if they haven't gone through onboarding, route them there
-      } else if (!this.tenant.settings.teamNamed) {
-        this.$router.push({
-          name: 'welcome',
-          params: {
-            tenant: this.tenant.slug
-          }
-        })
-      }
+    if (
+      window.location.pathname?.includes('logout') ||
+      window.location.pathname?.includes('access-denied') ||
+      window.location.pathname?.includes('login')
+    ) {
+      return
     }
-
-    // document.addEventListener(
-    //   'visibilitychange',
-    //   this.handleVisibilityChange,
-    //   false
-    // )
-    // window.addEventListener('blur', this.handleVisibilityChange, false)
-    // window.addEventListener('focus', this.handleVisibilityChange, false)
+    // If the application has loaded but the user isn't authenticated, authorized, or has no tenant
+    // redirect them to the help screen
+    if (!this.isAuthorized || !this.isAuthenticated || !this.tenant?.id) {
+      this.$router.push({
+        name: 'login',
+        params: {
+          tenant: this.tenant.slug
+        }
+      })
+    } 
   },
   methods: {
     ...mapMutations('agent', ['setSortedAgents']),
@@ -495,7 +416,7 @@ export default {
 
       <TeamSideNav
         v-if="
-          ((isCloud && isAuthenticated) || isServer) &&
+          (isAuthenticated) &&
             loadedComponents > 0 &&
             !isWelcome &&
             $route.name !== 'team-switched'
@@ -517,12 +438,6 @@ export default {
           <v-card-text>{{ error }}</v-card-text>
         </v-card>
       </v-container>
-
-      <GlobalSearch v-if="$vuetify.breakpoint.xsOnly && showNav" />
-
-      <v-slide-y-reverse-transition>
-        <Footer v-if="!fullPageRoute && !isWelcome" />
-      </v-slide-y-reverse-transition>
     </v-main>
 
     <Alert

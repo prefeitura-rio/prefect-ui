@@ -36,7 +36,6 @@ export default {
     ...mapGetters('user', ['user']),
     ...mapGetters('license', [
       'license',
-      'hasPermission',
       'allowedUsers',
       'role'
     ]),
@@ -87,8 +86,6 @@ export default {
       this.$apollo.queries.roles.refetch()
     },
     license() {
-      if (!this.hasPermission('feature', 'custom-role'))
-        this.$router.push({ name: 'dashboard' })
     }
   },
   methods: {
@@ -205,18 +202,7 @@ export default {
 </script>
 
 <template>
-  <v-sheet
-    v-if="!hasPermission('read', 'role')"
-    v-intersect="{ handler: onIntersect }"
-    height="100vH"
-    class="appBackground"
-  >
-    <div class="text-h4 text-center appBackground pt-8">
-      You do not have permission to access roles.
-    </div>
-  </v-sheet>
-
-  <v-row v-else>
+  <v-row>
     <v-col cols="3" class="pa-0 ma-0">
       <v-navigation-drawer permanent class="ma-0" height="100%" width="100%">
         <v-list dense nav>
@@ -266,7 +252,7 @@ export default {
           </v-list-item>
         </v-list>
 
-        <v-list v-if="hasPermission('feature', 'custom-role')" dense nav>
+        <v-list dense nav>
           <v-list-item>
             <v-list-item-content>
               <v-list-item-title
@@ -275,7 +261,6 @@ export default {
                 <span
                   >Custom Roles
                   <v-btn
-                    v-if="hasPermission('create', 'role')"
                     :disabled="addRole"
                     color="primary"
                     icon

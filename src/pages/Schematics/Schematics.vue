@@ -7,10 +7,9 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant']),
-    ...mapGetters('auth', ['authorizationToken'])
   },
   watch: {
-    authorizationToken(val) {
+    tenant(val) {
       if (val) {
         this.$apollo.queries.flows.refetch()
       }

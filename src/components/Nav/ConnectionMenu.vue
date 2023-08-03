@@ -1,11 +1,8 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import ExternalLink from '@/components/ExternalLink'
-import HavingTrouble from '@/components/HavingTrouble'
 import { clearCache } from '@/vue-apollo'
 
 export default {
-  components: { ExternalLink, HavingTrouble },
   data() {
     return {
       backendTimeout: null,
@@ -17,8 +14,6 @@ export default {
   computed: {
     ...mapGetters('api', [
       'backend',
-      'isServer',
-      'isCloud',
       'url',
       'apiMode',
       'connected',
@@ -53,32 +48,17 @@ export default {
       this.backendTimeout = setTimeout(async () => {
         this.loading = false
 
-        if (!this.isCloud) {
-          await this.switchBackend('CLOUD')
-        } else {
-          await this.switchBackend('SERVER')
-        }
+        await this.switchBackend('SERVER')
 
         clearCache()
         this.handlePostTokenRouting()
       }, 2000)
     },
     handlePostTokenRouting() {
-      if (this.isCloud && !this.tenant.settings.teamNamed) {
-        this.$router.push({
-          name: 'welcome',
-          params: {
-            tenant: this.tenant?.slug
-          }
-        })
-
-        return
-      } else {
         this.$router.push({
           name: 'dashboard',
           params: { tenant: this.tenant?.slug }
         })
-      }
     }
   }
 }
@@ -135,7 +115,7 @@ export default {
             class="px-3 white--text font-weight-bold text-subtitle-1"
             depressed
             tile
-            :outlined="isServer"
+            :outlined="false"
             :disabled="loading"
             style="width: 50%;"
             @click="_switchBackend('CLOUD')"
@@ -144,7 +124,7 @@ export default {
               class="logo mr-2"
               style="opacity: 0.5;"
               src="@/assets/logos/cloud-logo-no-text.svg"
-              :style="isCloud && 'filter: brightness(0) invert(1); opacity: 1;'"
+              :style="'filter: brightness(0) invert(1); opacity: 1;'"
             />
             Cloud
           </v-btn>
@@ -153,8 +133,8 @@ export default {
             class="px-3 font-weight-bold text-subtitle-1"
             depressed
             tile
-            :color="isServer ? 'primary' : 'utilGrayDark'"
-            :outlined="isCloud"
+            :color="'utilGrayDark'"
+            :outlined="false"
             :disabled="loading"
             style="width: 50%;"
             @click="_switchBackend('SERVER')"
@@ -165,7 +145,7 @@ export default {
               src="@/assets/logos/core-logo-no-text.svg"
               style="opacity: 0.5;"
               :style="
-                (isServer || $vuetify.theme.dark) &&
+                ($vuetify.theme.dark) &&
                   'filter: brightness(0) invert(1); opacity: 1;'
               "
             />
@@ -178,21 +158,11 @@ export default {
           <span v-else>Couldn't connect</span>
           to
           <span class="font-weight-bold">
-            <span v-if="isCloud" class="primary--text">Prefect Cloud </span>
-            <span v-else class="utilGrayDark--text">Prefect Server</span>
-          </span>
-          <span v-if="isServer">
-            at
-            <span class="font-weight-bold">{{ url }}</span>
+            <span class="primary--text">Prefect</span>
           </span>
         </div>
 
         <v-divider class="grey lighten-3 my-3" style="width: 50%;" />
-
-        <!-- If the user is having trouble connecting to Server -->
-        <div v-if="isServer && (!connected || connecting)">
-          <HavingTrouble />
-        </div>
 
         <!-- If the API is in maintenance mode -->
         <div v-if="apiMode == 'maintenance'">
@@ -201,13 +171,8 @@ export default {
           delayed.
         </div>
 
-        <div v-else-if="isCloud">
-          Having trouble? Check out the
-          <ExternalLink href="https://prefect.status.io/"
-            >Prefect Cloud status page</ExternalLink
-          >
-          for information about upcoming maintenance windows and the current
-          uptime of Prefect Cloud services.
+        <div v-else>
+          Having trouble? Contact us!
         </div>
       </v-alert>
     </v-sheet>

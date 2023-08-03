@@ -42,10 +42,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant', 'role']),
     ...mapGetters('user', ['user']),
-    ...mapGetters('license', ['hasPermission']),
     activeClearScreen() {
       if (this.success) return 'success'
       if (this.loading) return 'loading'
@@ -53,13 +51,7 @@ export default {
       return 'form'
     },
     permissionsCheck() {
-      return (
-        this.hasPermission('delete', 'project') &&
-        this.hasPermission('delete', 'membership') &&
-        this.hasPermission('delete', 'membership-invitation') &&
-        this.hasPermission('delete', 'api-key') &&
-        this.hasPermission('delete', 'secret')
-      )
+      return true
     },
     confirmDisabled() {
       return (
@@ -97,9 +89,7 @@ export default {
       this.dataLoading = true
 
       const { data } = await this.$apollo.query({
-        query: require('@/graphql/TeamSettings/data-to-clear.js').default(
-          this.isCloud
-        ),
+        query: require('@/graphql/TeamSettings/data-to-clear.js').default(),
         fetchPolicy: 'no-cache'
       })
       this.timeout = setTimeout(() => {
@@ -142,11 +132,7 @@ export default {
       count: null,
       icon: 'people'
     }
-    if (this.isCloud) {
-      this.dataMapping = { projects, flows, memberships }
-    } else {
-      this.dataMapping = { projects, flows }
-    }
+    this.dataMapping = { projects, flows, memberships }
   },
   methods: {
     _close() {
@@ -262,9 +248,7 @@ export default {
   apollo: {
     data: {
       query() {
-        return require('@/graphql/TeamSettings/data-to-clear.js').default(
-          this.isCloud
-        )
+        return require('@/graphql/TeamSettings/data-to-clear.js').default()
       },
       result({ data }) {
         if (!data) return

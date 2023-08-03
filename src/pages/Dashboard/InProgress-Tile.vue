@@ -46,7 +46,6 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['timezone']),
     loading() {
@@ -212,7 +211,6 @@ export default {
             {{ title }}
           </div>
           <ConcurrencyInfo
-            v-if="isCloud"
             class="text-caption position-absolute"
             style="bottom: 2px;"
           />

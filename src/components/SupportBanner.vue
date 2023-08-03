@@ -1,5 +1,4 @@
 <script>
-import { mapGetters } from 'vuex'
 import ExternalLink from '@/components/ExternalLink'
 export default {
   components: { ExternalLink },
@@ -7,9 +6,6 @@ export default {
     return {
       dismissed: false
     }
-  },
-  computed: {
-    ...mapGetters('api', ['isCloud'])
   },
   methods: {
     handleDismiss() {

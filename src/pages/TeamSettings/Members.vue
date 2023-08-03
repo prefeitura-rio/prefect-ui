@@ -76,7 +76,6 @@ export default {
     ...mapGetters('user', ['user']),
     ...mapGetters('license', [
       'license',
-      'hasPermission',
       'allowedUsers',
       'planType'
     ]),
@@ -90,12 +89,7 @@ export default {
       return this.users >= this.totalAllowedUsers
     },
     permissionsCheck() {
-      return (
-        this.hasPermission('create', 'membership') &&
-        this.hasPermission('update', 'membership') &&
-        this.hasPermission('delete', 'membership') &&
-        this.hasPermission('feature', 'basic-rbac')
-      )
+      return true
     },
     roleSelectionMap() {
       return [
@@ -122,9 +116,6 @@ export default {
     filteredRoles() {
       if (!this.roles) return []
       let rolesToRM = ['RUNNER']
-      if (!this.hasPermission('license', 'admin')) {
-        rolesToRM = ['ENTERPRISE_LICENSE_ADMIN', 'RUNNER']
-      }
       return this.roles.filter(role => !rolesToRM.includes(role.name))
     }
   },
@@ -264,7 +255,7 @@ export default {
       </span>
     </template>
 
-    <template v-if="hasPermission('create', 'membership-invitation')" #cta>
+    <template #cta>
       <v-btn
         :disabled="insufficientUsers || !roles"
         color="primary"
@@ -413,7 +404,7 @@ export default {
       <!-- PENDING INVITATIONS TABLE -->
       <v-tab-item value="pending" eager>
         <InvitationsTable
-          :permissions-check="hasPermission('delete', 'membership-invitation')"
+          :permissions-check="true"
           :role-color-map="roleColorMap"
           :role-map="roleMap"
           :search="searchInput"
@@ -480,7 +471,7 @@ export default {
           :menu-props="{ offsetY: true }"
           label="Role"
           data-cy="invite-role"
-          :disabled="!hasPermission('feature', 'basic-rbac')"
+          :disabled="false"
           prepend-icon="supervised_user_circle"
           :color="roleColorMap[roleInput]"
           :items="filteredRoles"
@@ -496,28 +487,6 @@ export default {
             {{ roleMap[item.name] ? roleMap[item.name] : item.name }}
           </template>
         </v-select>
-        <div
-          v-if="!hasPermission('feature', 'basic-rbac')"
-          class="text-caption"
-        >
-          Looking for role-based access controls? This feature is available on
-          Standard plans; check out our
-          <ExternalLink href="https://prefect.io/pricing"
-            >pricing page</ExternalLink
-          >
-          for more details.
-        </div>
-        <div
-          v-else-if="!hasPermission('feature', 'custom-role')"
-          class="text-caption"
-        >
-          Looking for custom role-based access controls? This feature is only
-          available on Enterprise plans; check out our
-          <ExternalLink href="https://prefect.io/pricing"
-            >pricing page</ExternalLink
-          >
-          for more details.
-        </div>
       </v-form>
     </ConfirmDialog>
   </ManagementLayout>

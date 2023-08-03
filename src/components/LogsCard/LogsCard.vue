@@ -1,11 +1,9 @@
 <script>
 /* eslint-disable vue/no-v-html */
 
-import { mapGetters } from 'vuex'
 import moment from 'moment-timezone'
 import vueScrollTo from 'vue-scrollto'
 
-import store from '@/store'
 import { STATE_TYPES } from '@/utils/states'
 import DownloadMenu from './DownloadMenu'
 import FilterMenu from './FilterMenu'
@@ -103,7 +101,6 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('api', ['isCloud']),
     // Derive the state of the flow or task
     entityState() {
       if (!this.logsQueryResults) return 'Fetching logs'
@@ -392,19 +389,11 @@ export default {
     logDate(datetime) {
       let dt = moment(datetime)
 
-      if (store.getters['user/timezone']) {
-        dt = dt.tz(store.getters['user/timezone'])
-      }
-
       return dt.format('D MMMM YYYY')
     },
     // Format a log entry's time based on the datetime timestamp
     logTime(datetime) {
       let dt = moment(datetime)
-
-      if (store.getters['user/timezone']) {
-        dt = dt.tz(store.getters['user/timezone'])
-      }
 
       return dt.format('hh:mm:ss z')
     },
@@ -656,7 +645,7 @@ export default {
         <span v-if="failedToRetrieveArchivedLogs">
           <a @click="retrieveArchivedLogs"><u>Retry?</u></a>
         </span>
-        <span v-else-if="logCount === 0 && isCloud" class="ma-0">
+        <span v-else-if="logCount === 0" class="ma-0">
           <br />
           <br />
           <a @click="retrieveArchivedLogs"><u>Click here</u></a> to retrieve

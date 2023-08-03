@@ -1,5 +1,5 @@
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions } from 'vuex'
 import AcceptConfirmInputRow from '@/components/AcceptConfirmInputRow'
 import { handleMembershipInvitations } from '@/mixins/membershipInvitationMixin'
 
@@ -30,12 +30,11 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('user', ['memberships']),
     isMember() {
       return this.membershipTeamIds.includes(this.content.sender_tenant_id)
     },
     membershipTeamIds() {
-      return this.memberships.map(m => m.tenant.id)
+      return []
     },
     membershipInvitationIsValid() {
       return this.membershipInvitation

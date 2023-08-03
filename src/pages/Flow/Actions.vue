@@ -1,5 +1,4 @@
 <script>
-import LogRocket from 'logrocket'
 import { mapGetters, mapActions } from 'vuex'
 
 import DeleteButton from '@/components/DeleteFlowButton'
@@ -45,7 +44,6 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant']),
-    ...mapGetters('license', ['hasPermission']),
     isQuickRunnable() {
       if (!this.flow.parameters) return true
 
@@ -57,8 +55,8 @@ export default {
       }, true)
     },
     disableToggle() {
-      const c = !this.hasPermission('create', 'run')
-      const d = !this.hasPermission('delete', 'run')
+      const c = false
+      const d = false
       const scheduled = this.isScheduled
 
       return (c && d) || (!scheduled && c) || (scheduled && d)
@@ -181,7 +179,6 @@ export default {
             timeout: 10000
           }
         })
-        LogRocket.captureException(err)
       }
       this.isRunning = false
     },
@@ -273,7 +270,7 @@ export default {
       bottom
       max-width="340"
       :open-delay="
-        !hasPermission('create', 'run') || !isQuickRunnable || archived
+        !isQuickRunnable || archived
           ? 0
           : 750
       "
@@ -289,7 +286,7 @@ export default {
             small
             data-cy="start-flow-quick-run"
             :disabled="
-              !hasPermission('create', 'run') || !isQuickRunnable || archived
+              !isQuickRunnable || archived
             "
             :loading="isRunning"
             @click="quickRunFlow"
@@ -310,10 +307,7 @@ export default {
           </v-btn>
         </div>
       </template>
-      <span v-if="!hasPermission('create', 'run')">
-        You don't have permission to run flows
-      </span>
-      <span v-else-if="!isQuickRunnable">
+      <span v-if="!isQuickRunnable">
         This flow has required parameters that must be set before a run. Set a
         default parameter value in the flow settings page or select the RUN tab
         to launch this flow.
@@ -366,10 +360,7 @@ export default {
           </v-badge>
         </div>
       </template>
-      <span v-if="!hasPermission('create', 'run')">
-        You don't have permission to schedule flows.
-      </span>
-      <span v-else-if="schedule == null && isScheduled">
+      <span v-if="schedule == null && isScheduled">
         This flow is trying to schedule runs but has no schedules! Visit this
         flow's
         <span class="font-weight-bold">Settings > Schedules</span> to set a new

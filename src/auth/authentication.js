@@ -1,85 +1,58 @@
-import { OktaAuth } from '@okta/okta-auth-js'
+import store from '@/store'
+import { setStartupTenant } from '@/main.js'
 
-const {
-  VUE_APP_PUBLIC_CLIENT_ID,
-  VUE_APP_PUBLIC_ISSUER,
-  VUE_APP_ENVIRONMENT
-} = process.env
+const { VUE_APP_SERVER_URL } = process.env
 
-const storageTypes = ['memory', 'sessionStorage', 'cookie', 'localStorage']
-
-export const authClient = new OktaAuth({
-  clientId: VUE_APP_PUBLIC_CLIENT_ID,
-  issuer: VUE_APP_PUBLIC_ISSUER,
-  redirectUri: window.location.origin,
-  postLogoutRedirectUri: window.location.origin + '/logout',
-  scopes: ['openid', 'profile', 'email'],
-  testing: {
-    disableHttpsCheck: VUE_APP_ENVIRONMENT !== 'production'
-  },
-  tokenManager: {
-    autoRenew: true
-  },
-  pkce: OktaAuth.features.isPKCESupported(),
-  storageManager: {
-    token: {
-      storageType: 'memory',
-      storageTypes: storageTypes,
-      useMultipleCookies: true
-    },
-    cache: {
-      storageType: 'memory',
-      storageTypes: storageTypes
-    },
-    transaction: {
-      storageType: 'sessionStorage',
-      storageTypes: storageTypes
-    }
-  }
-})
-
-authClient.start()
-
-export const authenticate = async () => {
-  const isLoginRedirect = await authClient.isLoginRedirect()
-  const redirectRoute = sessionStorage.getItem('redirectRoute')
-  if (isLoginRedirect) {
-    const { tokens } = await authClient.token.parseFromUrl()
-
-    authClient.tokenManager.setTokens(tokens)
-    if (redirectRoute) {
-      history.replaceState(null, null, redirectRoute)
-      sessionStorage.removeItem('redirectRoute')
-    }
-
-    return tokens
-  } else {
-    if (window.location?.pathname && !redirectRoute) {
-      sessionStorage.setItem(
-        'redirectRoute',
-        window.location.pathname + window.location.search
-      )
-    }
+class AuthProxyClient {
+  constructor() {
+    this.url = VUE_APP_SERVER_URL
   }
 
-  const tokens = await authClient.tokenManager.getTokens()
-
-  if (tokens?.idToken) {
-    if (authClient.tokenManager.hasExpired(tokens.idToken)) {
-      try {
-        const idToken = await authClient.tokenManager.renew('idToken')
-        tokens.idToken = idToken
-      } catch {
-        return await authClient.token.getWithRedirect({
-          responseType: ['token', 'id_token']
-        })
-      }
-    }
-
-    return tokens
+  async signIn({ username, password }) {
+    const response = await fetch(new URL('/auth/login', this.url), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    })
+    const data = await response.json()
+    return data
   }
 
-  await authClient.token.getWithRedirect({
-    responseType: ['token', 'id_token']
-  })
+  async getTenants({ token }) {
+    const response = await fetch(new URL('/user/me/tenant', this.url), {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      options: { credentials: 'include' }
+    })
+    const data = await response.json()
+    return data
+  }
+}
+
+export const authClient = new AuthProxyClient()
+
+export const authenticate = async (token = null) => {
+  // If we don't have a token, try to get one from local storage
+  if (!token) {
+    token = localStorage.getItem('apiToken')
+  }
+  // If we still don't have a token, move to the login page
+  if (!token) {
+    window.location.href = '/login'
+    return
+  }
+  // Store the token in the store and local storage
+  localStorage.setItem('apiToken', token)
+  store.commit('auth/apiToken', token)
+  // Get tenants from the server
+  const tenants = await authClient.getTenants({ token })
+  // Store the tenants in the store
+  store.commit('tenant/setTenants', tenants)
+  setStartupTenant()
+  // Trigger store action
+  store.dispatch('user/getUser')
+  return token
 }

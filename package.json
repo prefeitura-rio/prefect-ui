@@ -16,8 +16,6 @@
     "changelog": "auto-changelog --commit-limit 0 --template changelog-template.hbs --tag-pattern [0-9]{4}-[0-9]{2}-[0-9]{2}"
   },
   "dependencies": {
-    "@auth0/auth0-spa-js": "^1.14.0",
-    "@okta/okta-auth-js": "^5.2.2",
     "apollo-link-batch-http": "^1.2.14",
     "caniuse-lite": "^1.0.30001390",
     "codemirror": "^5.60.0",
@@ -32,8 +30,6 @@
     "js-beautify": "^1.13.5",
     "jwt-decode": "^3.1.2",
     "lodash": "^4.17.21",
-    "logrocket": "^1.0.14",
-    "logrocket-vuex": "0.0.3",
     "moment": "^2.29.1",
     "moment-duration-format": ">=2.3.2",
     "moment-timezone": "^0.5.37",

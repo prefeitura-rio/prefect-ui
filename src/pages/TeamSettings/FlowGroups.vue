@@ -85,8 +85,6 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant']),
-    ...mapGetters('api', ['isCloud']),
-    ...mapGetters('license', ['hasPermission']),
 
     deleteFvgMutation() {
       if (!this.versionGroupFlows) return {}
@@ -113,10 +111,7 @@ export default {
       return this.loadingKey > 0
     },
     permissionsCheck() {
-      return (
-        this.hasPermission('update', 'run') &&
-        this.hasPermission('delete', 'run')
-      )
+      return true
     },
     items() {
       if (!(this.versionGroups && this.flows)) return []
@@ -215,9 +210,7 @@ export default {
     },
     versionGroups: {
       query() {
-        return require('@/graphql/TeamSettings/flow-version-groups.js').default(
-          this.isCloud
-        )
+        return require('@/graphql/TeamSettings/flow-version-groups.js').default()
       },
       error() {
         this.handleError(

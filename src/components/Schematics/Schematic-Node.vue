@@ -163,7 +163,7 @@ export default {
       return FINISHED_STATES.includes(state)
     },
     onIntersect([entry]) {
-      this.$apollo.queries.mappedChildren.skip = !entry.isIntersecting
+      this.$apollo.queries.mappedChildren.skip = !entry.isIntersecting || this.nodeData?.data?.state !== 'Mapped' || !this.nodeData?.data?.task_run_id
     }
   },
   apollo: {

@@ -23,7 +23,6 @@ export default {
   computed: {
     ...mapGetters('tenant', ['tenant', 'tenants']),
     ...mapGetters('license', [
-      'hasPermission',
       'permissions',
       'license',
       'planType'
@@ -61,7 +60,10 @@ export default {
       await this.setCurrentTenant(tenant.slug)
 
       clearCache()
-      this.loading = false
+      this.$router.push({
+        name: 'dashboard',
+        params: { tenant: this.tenant.slug }
+      })
     },
     handleShowDeleteDialog(tenant) {
       this.teamToDelete = tenant
@@ -141,7 +143,7 @@ export default {
       query: require('@/graphql/Account/license-users.gql'),
       loadingKey: 'loadingKey',
       skip() {
-        return !this.hasPermission('license', 'admin')
+        return false
       },
       update(data) {
         if (!data) return
@@ -157,27 +159,7 @@ export default {
 
 <template>
   <div>
-    <v-container
-      v-if="!hasPermission('license', 'admin')"
-      class="text-h5 text-center blue-grey--text d-flex align-center justify-center"
-      style="height: 400px;"
-      fluid
-    >
-      <div>
-        <i class="fad fa-lock-alt fa-3x" />
-        <div class="mt-6">
-          <span v-if="planType('ENTERPRISE')">
-            You don't have permission to view license teams; contact your
-            license administrator to get access.
-          </span>
-          <span v-else>
-            Multi-tenancy is only available on Enterprise plans.
-          </span>
-        </div>
-      </div>
-    </v-container>
-
-    <v-container v-else fluid>
+    <v-container fluid>
       <div class="mx-4 mb-4 d-flex align-center justify-end">
         <div class="mr-auto text-h5 font-weight-light" @click="refetch">
           {{ teams.length }}/{{ license.terms.tenants }} team slots used

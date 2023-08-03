@@ -1,19 +1,11 @@
-import { fallbackApolloClient } from '@/vue-apollo'
 import { prefectTenants } from '@/middleware/prefectAuth'
-import { switchTenant, commitTokens } from '@/auth/index.js'
+// import { switchTenant } from '@/auth/index.js'
 
 const state = {
   defaultTenant: null,
   tenant: {
     id: null,
-    name: null,
-    info: null,
-    slug: null,
-    role: null,
-    licenses: [],
-    settings: {},
-    prefectAdminSettings: {},
-    stripe_customer: null
+    slug: null
   },
   isLoadingTenant: false,
   tenantIsSet: false,
@@ -26,9 +18,6 @@ const getters = {
   },
   isLoadingTenant(state) {
     return state.isLoadingTenant
-  },
-  role(state) {
-    return state.tenant.role
   },
   tenant(state) {
     return state.tenant || state.defaultTenant
@@ -94,39 +83,28 @@ const mutations = {
   },
   unsetTenants(state) {
     state.tenants = []
-  },
-  updateTenantSettings(state, settings) {
-    if (!settings || !Object.keys(settings).length) {
-      throw new Error('passed invalid or empty settings object')
-    }
-    state.tenant.settings = settings
   }
 }
 
 const actions = {
-  async getTenants({ commit, getters, rootGetters }) {
+  async getTenants({ commit, getters }) {
     try {
-      const tenants = await prefectTenants(rootGetters['api/isCloud'])
+      const tenants = await prefectTenants()
       commit('setTenants', tenants)
-
       // Make sure the current tenant object is updated
       if (getters['tenantIsSet']) {
         let tenant = getters['tenants']?.find(
-          t => t.id === getters['tenant'].id
+          (t) => t.id === getters['tenant'].id
         )
-
-        tenant.role = rootGetters['user/memberships'].find(
-          membership => membership.tenant.id == tenant.id
-        )?.role_detail?.name
         commit('setTenant', tenant)
       }
-    } catch {
-      // Do nothing since the GraphQL error should be logged by Apollo afterware
+    } catch (e) {
+      console.error('Error getting tenants', e)
+      throw e
     }
-
     return getters['tenants']
   },
-  async setCurrentTenant({ commit, dispatch, getters, rootGetters }, slug) {
+  async setCurrentTenant({ commit, dispatch, getters }, slug) {
     slug = slug || getters['defaultTenant']?.slug || getters['tenants'][0]?.slug
 
     if (!slug) {
@@ -138,7 +116,7 @@ const actions = {
     try {
       commit('setIsLoadingTenant', true)
 
-      let tenant = getters['tenants']?.find(t => t.slug === slug)
+      let tenant = getters['tenants']?.find((t) => t.slug === slug)
 
       if (!tenant) {
         // If the tenant doesn't exist
@@ -147,30 +125,18 @@ const actions = {
         await dispatch('getTenants')
       }
 
-      tenant = getters['tenants']?.find(t => t.slug === slug)
+      tenant = getters['tenants']?.find((t) => t.slug === slug)
       if (!tenant) {
         throw new Error("Unable to set current tenant: tenant doesn't exist")
       }
 
-      if (rootGetters['api/isCloud']) {
-        // We only need to get new tokens if we have a tenant
-        // already - otherwise tokens are fetched through the initial
-        // authorization process
-        if (getters['tenantIsSet']) {
-          const tokens = await switchTenant(tenant.id)
-          commitTokens(tokens)
-        }
-
-        // Get the current license
-        await dispatch('license/getLicense', null, { root: true })
-
-        tenant.role = rootGetters['user/memberships'].find(
-          membership => membership.tenant.id == tenant.id
-        )?.role_detail?.name
-      } else {
-        tenant.role = 'TENANT_ADMIN'
+      // We only need to get new tokens if we have a tenant
+      // already - otherwise tokens are fetched through the initial
+      // authorization process
+      if (getters['tenantIsSet']) {
+        // const tokens = await switchTenant(tenant.id)
+        // commitTokens(tokens)
       }
-
       commit('setTenant', tenant)
     } catch (e) {
       throw new Error(`Problem setting tenant: ${e}`)
@@ -178,25 +144,6 @@ const actions = {
 
     commit('setIsLoadingTenant', false)
     return getters['tenant']
-  },
-  async updateTenantSettings({ dispatch }, settings) {
-    try {
-      if (!settings || !Object.keys(settings).length) {
-        throw new Error('passed invalid or empty settings object')
-      }
-      await fallbackApolloClient.mutate({
-        mutation: require('@/graphql/Mutations/update-tenant-settings.gql'),
-        variables: {
-          settings
-        },
-        error(error) {
-          throw error
-        }
-      })
-      await dispatch('getTenants')
-    } catch (e) {
-      throw new Error(`Problem updating tenant settings: ${e}`)
-    }
   }
 }
 

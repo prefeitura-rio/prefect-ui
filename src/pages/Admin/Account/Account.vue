@@ -41,29 +41,13 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant', 'role']),
     ...mapGetters('license', ['license', 'planType']),
     isUsageBased() {
       return this.license?.terms?.is_usage_based
     },
     usageTile() {
-      if (!this.isCloud) return null
-      if (!this.license) return 'loading'
-      const isSelfServe = this.license.terms.is_self_serve
-      const isUsageBased = this.license.terms.is_usage_based
-
-      // Legacy license, not self-serve (so no upgrade)
-      if (!isSelfServe && !isUsageBased) return null
-
-      // Legacy license, self-serve (so can upgrade)
-      if (isSelfServe && !isUsageBased) return 'UpgradeUsageTile'
-
-      // Usage license, not self-serve (show committed runs)
-      if (!isSelfServe && isUsageBased) return 'CommittedUsageTile'
-
-      // Usage license && self-serve
-      return 'CycleUsageTile'
+      return null;
     }
   },
   watch: {
@@ -107,7 +91,7 @@ export default {
 
 <template>
   <div>
-    <v-container v-if="isCloud" fluid>
+    <v-container fluid>
       <v-row class="usage-row">
         <v-col cols="12" class="usage-grid">
           <v-skeleton-loader
@@ -234,16 +218,6 @@ export default {
       </v-row>
     </v-container>
 
-    <v-container v-else>
-      <v-row>
-        <v-col cols="12">
-          <Profile />
-        </v-col>
-        <v-col cols="12">
-          <ClearDataDialog />
-        </v-col>
-      </v-row>
-    </v-container>
   </div>
 </template>
 

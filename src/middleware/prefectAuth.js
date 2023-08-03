@@ -1,6 +1,7 @@
 import { fallbackApolloClient } from '@/vue-apollo'
+const { VUE_APP_SERVER_URL } = process.env
 
-const prefectAuth = async idToken => {
+const prefectAuth = async (idToken) => {
   try {
     const result = await fallbackApolloClient.mutate({
       mutation: require('@/graphql/log-in.gql'),
@@ -27,7 +28,7 @@ const prefectAuth = async idToken => {
   }
 }
 
-const prefectRefresh = async accessToken => {
+const prefectRefresh = async (accessToken) => {
   try {
     const result = await fallbackApolloClient.mutate({
       mutation: require('@/graphql/refresh-token.gql'),
@@ -50,19 +51,27 @@ const prefectRefresh = async accessToken => {
 
 const prefectUser = async () => {
   try {
-    const user = await fallbackApolloClient.query({
-      query: require('@/graphql/User/user.gql'),
-      fetchPolicy: 'no-cache'
+    const response = await fetch(new URL('/user/me', VUE_APP_SERVER_URL), {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('apiToken')}`
+      }
     })
-    return user.data.user[0]
+    const data = await response.json()
+    const user = {
+      id: data.id,
+      username: data.username
+    }
+    return user
   } catch (error) {
     throw new Error('Error retrieving user in prefectUser', error)
   }
 }
 
-const prefectTenants = async isCloud => {
+const prefectTenants = async () => {
   const result = await fallbackApolloClient.query({
-    query: require('@/graphql/Tenant/tenants.js').default(isCloud),
+    query: require('@/graphql/Tenant/tenants.js').default(),
     fetchPolicy: 'no-cache'
   })
   return result.data.tenant

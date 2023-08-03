@@ -67,13 +67,12 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['timezone']),
     headers() {
       return [
         ...serverHeaders,
-        ...(this.isCloud ? cloudHeaders : []),
+        ...(cloudHeaders),
         ...serverHeadersPost
       ]
     },
@@ -130,7 +129,7 @@ export default {
   apollo: {
     versions: {
       query() {
-        return require('@/graphql/Flow/flow-versions.js').default(this.isCloud)
+        return require('@/graphql/Flow/flow-versions.js')
       },
       variables() {
         return {

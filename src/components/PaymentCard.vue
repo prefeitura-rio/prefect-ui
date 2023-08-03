@@ -34,7 +34,6 @@ const elementClasses = {
 
 import { teamProfileMixin } from '@/mixins/teamProfileMixin.js'
 import { paymentMixin } from '@/mixins/paymentMixin.js'
-import LogRocket from 'logrocket'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
@@ -167,12 +166,6 @@ export default {
           }
         }
       } catch (e) {
-        LogRocket.captureException(e, {
-          extra: {
-            pageName: 'payment card',
-            stage: 'update stripe customer'
-          }
-        })
         this.loading = false
         this.cardError = 'There was a problem adding your card information.'
       }

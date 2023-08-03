@@ -316,7 +316,10 @@ export default {
     },
     onIntersect([entry]) {
       this.$apollo.queries.taskRuns.skip = !entry.isIntersecting
-      this.$apollo.queries.mappedChildren.skip = !entry.isIntersecting
+      this.$apollo.queries.mappedChildren.skip = () => {
+        if (!this.mappedTaskRuns) return true
+        return !entry.isIntersecting || !this.mappedTaskRuns.length || !this.mappedChildrenQuery
+      }
     }
   },
   apollo: {
@@ -356,7 +359,8 @@ export default {
       `
       },
       skip() {
-        return !this.taskRuns || !this.mappedTaskRuns.length
+        if (!this.mappedTaskRuns) return true
+        return !this.mappedTaskRuns.length || !this.mappedChildrenQuery
       },
       pollInterval: 60000,
       update(data) {

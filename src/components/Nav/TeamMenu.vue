@@ -1,19 +1,14 @@
 <script>
 import { mapGetters } from 'vuex'
-import UpgradeBadge from '@/components/UpgradeBadge'
 
 export default {
-  components: {
-    UpgradeBadge
-  },
   data() {
     return {
       model: false
     }
   },
   computed: {
-    ...mapGetters('api', ['isCloud']),
-    ...mapGetters('license', ['hasPermission'])
+    ...mapGetters('license')
   }
 }
 </script>
@@ -42,7 +37,7 @@ export default {
 
     <v-sheet width="400" class="white">
       <v-list>
-        <v-list-item :disabled="!isCloud" :to="'/team/tokens'">
+        <v-list-item :disabled="false" :to="'/team/tokens'">
           <v-list-item-avatar tile>
             <i class="o-100 fad fa-exchange-alt fa-2x" />
           </v-list-item-avatar>
@@ -56,7 +51,7 @@ export default {
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item :disabled="!isCloud" :to="'/team/actions'">
+        <v-list-item :disabled="false" :to="'/team/actions'">
           <v-list-item-avatar>
             <span class="auto-icon">
               <i class="fad fa-random" style="width: 24px; height: 24px;"></i>
@@ -84,7 +79,7 @@ export default {
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item :disabled="!isCloud" :to="'/team/flow-concurrency'">
+        <v-list-item :disabled="false" :to="'/team/flow-concurrency'">
           <v-list-item-avatar tile>
             <v-icon large color="navIcons">
               pi-flow-run
@@ -116,7 +111,7 @@ export default {
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item :disabled="!isCloud" :to="'/team/kv'">
+        <v-list-item :disabled="false" :to="'/team/kv'">
           <v-list-item-avatar tile>
             <span style="color: Dodgerblue;">
               <i class="fad fa-brackets-curly fa-2x"></i>
@@ -132,7 +127,7 @@ export default {
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item :disabled="!isCloud" :to="'/team/members'">
+        <v-list-item :disabled="false" :to="'/team/members'">
           <v-list-item-avatar tile>
             <i class="o-100 fad fa-users fa-2x" />
           </v-list-item-avatar>
@@ -163,7 +158,7 @@ export default {
         </v-list-item>
 
         <v-list-item
-          :disabled="!isCloud || !hasPermission('feature', 'custom-role')"
+          :disabled="false"
           :to="'/team/roles'"
         >
           <v-list-item-avatar tile>
@@ -172,14 +167,7 @@ export default {
           <v-list-item-content>
             <v-list-item-title class="text-subtitle-1"
               >Roles
-              <UpgradeBadge
-                v-if="isCloud && !hasPermission('feature', 'custom-role')"
-                depressed
-                inline
-              >
-                <span class="font-weight-medium">Custom Roles</span> are only
-                available on Enterprise plans.
-              </UpgradeBadge></v-list-item-title
+              </v-list-item-title
             >
             <v-list-item-subtitle>
               Manage Team Roles
@@ -187,7 +175,7 @@ export default {
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item :disabled="!isCloud" :to="'/team/secrets'">
+        <v-list-item :disabled="false" :to="'/team/secrets'">
           <v-list-item-avatar tile>
             <i class="o-100 fad fa-key-skeleton fa-2x" />
           </v-list-item-avatar>
@@ -201,7 +189,7 @@ export default {
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item :disabled="!isCloud" :to="'/team/service-accounts'">
+        <v-list-item :disabled="false" :to="'/team/service-accounts'">
           <v-list-item-avatar tile>
             <i class="o-100 fad fa-user-hard-hat fa-2x" />
           </v-list-item-avatar>
@@ -215,7 +203,7 @@ export default {
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item :disabled="!isCloud" :to="'/team/task-concurrency'">
+        <v-list-item :disabled="false" :to="'/team/task-concurrency'">
           <v-list-item-avatar tile>
             <v-icon large color="primaryDark">
               pi-task-run

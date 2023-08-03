@@ -67,7 +67,6 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant']),
-    ...mapGetters('license', ['hasPermission'])
   },
 
   watch: {
@@ -135,7 +134,7 @@ export default {
   <ManagementLayout :show="!isFetchingTokens" control-show>
     <template #title>API Tokens</template>
 
-    <template v-if="hasPermission('create', 'service-account')" #subtitle>
+    <template #subtitle>
       <h4 class="error--text"
         ><v-icon class="error--text mr-1">error_outline</v-icon>DEPRECATED</h4
       >
@@ -148,69 +147,11 @@ export default {
       Existing tokens will continue to work, but new ones cannot be created.
       <br />
     </template>
-    <template v-else-if="!hasPermission('create', 'service-account')" #subtitle>
-      Manage
-      <a
-        href="https://docs.prefect.io/cloud/concepts/api.html#runner"
-        target="_blank"
-        rel="noopener noreferrer"
-        >RUNNER</a
-      >
-      <sup>
-        <v-icon x-small>
-          open_in_new
-        </v-icon>
-      </sup>
-      and
-      <a
-        href="https://docs.prefect.io/cloud/concepts/api.html#tenant"
-        target="_blank"
-        rel="noopener noreferrer"
-        >TENANT</a
-      >
-      <sup>
-        <v-icon x-small>
-          open_in_new
-        </v-icon>
-      </sup>
-      tokens.
-    </template>
-    <template v-else #subtitle>
-      Manage and create your
-      <a
-        href="https://docs.prefect.io/cloud/concepts/api.html#tenant"
-        target="_blank"
-        rel="noopener noreferrer"
-        >TENANT</a
-      >
-      <sup>
-        <v-icon x-small>
-          open_in_new
-        </v-icon>
-      </sup>
-      tokens.
-    </template>
-
-    <template v-if="!hasPermission('create', 'service-account')" #alerts>
-      <v-alert
-        class="mx-auto"
-        border="left"
-        colored-border
-        elevation="2"
-        type="warning"
-        tile
-        icon="lock"
-        max-width="380"
-      >
-        You don't have permission to manage API tokens.
-      </v-alert>
-    </template>
 
     <!-- SEARCH (MOBILE) -->
     <v-text-field
       v-if="
-        !$vuetify.breakpoint.mdAndUp &&
-          hasPermission('create', 'service-account')
+        !$vuetify.breakpoint.mdAndUp
       "
       v-model="search"
       class="rounded-0 elevation-1 mb-1"
@@ -227,8 +168,7 @@ export default {
       <v-card-text class="pa-0">
         <div
           v-if="
-            $vuetify.breakpoint.mdAndUp &&
-              hasPermission('create', 'service-account')
+            $vuetify.breakpoint.mdAndUp
           "
           class="py-1 mr-2 flex"
         >
@@ -250,7 +190,6 @@ export default {
 
         <!-- TOKENS TABLE -->
         <v-data-table
-          v-if="hasPermission('update', 'service-account')"
           fixed-header
           :headers="headers"
           :header-props="{ 'sort-icon': 'arrow_drop_up' }"
@@ -324,7 +263,6 @@ export default {
 
           <!-- TOKEN ACTIONS -->
           <template
-            v-if="hasPermission('delete', 'service-account')"
             #item.actions="{ item }"
           >
             <v-tooltip bottom>

@@ -10,7 +10,7 @@ export default {
   computed: {
     ...mapGetters('tenant', ['tenant']),
     paused() {
-      return this.tenant?.settings?.work_queue_paused
+      return false
     }
   },
   methods: {

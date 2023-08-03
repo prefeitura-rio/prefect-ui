@@ -1,6 +1,6 @@
 import gql from 'graphql-tag'
 
-export default function(isCloud) {
+export default function () {
   return gql`
     query Versions(
       $limit: Int
@@ -22,24 +22,11 @@ export default function(isCloud) {
 
           archived
           created
-          ${
-            isCloud
-              ? `
-                  created_by {
-            id
-            username
-          }
-          `
-              : ''
-          }
-
-
 
           name
           version
         }
       }
     }
-   
   `
 }

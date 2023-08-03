@@ -7,11 +7,11 @@ export default {
     return {
       autofilled: false,
       form: null,
-      showSignup: true || window.location.hostname === 'login.prefect.io'
+      username: null,
     }
   },
   mounted() {
-    this.$refs.email.$el
+    this.$refs.username.$el
       .querySelector('input')
       .addEventListener('animationstart', this.focus)
     this.$refs.password.$el
@@ -23,7 +23,7 @@ export default {
       switch (e.animationName) {
         case 'onAutoFillStart':
           this.autofilled = true
-          this.$refs.email.focus()
+          this.$refs.username.focus()
           break
         case 'onAutoFillCancel':
           this.autofilled = false
@@ -45,22 +45,22 @@ export default {
     <v-form
       v-model="form"
       class="text-center"
-      :class="!showSignup ? '' : error ? 'mb-5' : 'mb-8'"
+      :class="error ? 'mb-5' : 'mb-8'"
       @submit.prevent="login"
       @keyup.enter="login"
     >
       <div class="my-4">
         <v-text-field
-          ref="email"
-          v-model="email"
+          ref="username"
+          v-model="username"
           class="arboria autofillable-input"
           outlined
-          type="email"
-          label="Email"
+          type="username"
+          label="Username"
           :placeholder="autofilled ? ' ' : null"
           hide-details
-          autocomplete="email"
-          prepend-inner-icon="email"
+          autocomplete="username"
+          prepend-inner-icon="fa-user"
         />
       </div>
       <div class="mt-4 mb-2">
@@ -76,12 +76,6 @@ export default {
           autocomplete="current-password"
           prepend-inner-icon="lock"
         />
-      </div>
-
-      <div class="text-caption text-left">
-        <router-link :to="'/login/forgot-password'">
-          Forgot password?
-        </router-link>
       </div>
 
       <v-btn
@@ -100,59 +94,6 @@ export default {
       {{ error }}
     </div>
 
-    <div v-if="showSignup">
-      <v-divider class="my-5" />
-
-      <div class="py-2 text-center">
-        <v-btn
-          color="white"
-          block
-          height="auto"
-          class="google-button mx-auto pa-3"
-          @click="loginWithGoogle"
-        >
-          <v-avatar size="25" left>
-            <v-img src="@/assets/companies/google.png" />
-          </v-avatar>
-
-          <span class="ml-4 grey--text text--darken-2">
-            Continue with Google
-          </span>
-        </v-btn>
-      </div>
-
-      <div class="py-2 text-center">
-        <v-btn
-          color="white"
-          block
-          height="auto"
-          class="google-button mx-auto pa-3"
-          @click="loginWithGitHub"
-        >
-          <v-avatar size="25" left>
-            <v-img src="@/assets/companies/github.png" />
-          </v-avatar>
-
-          <span class="ml-4 grey--text text--darken-2">
-            Continue with GitHub
-          </span>
-        </v-btn>
-      </div>
-
-      <v-divider class="my-5" />
-
-      <div
-        class="text-caption mt-12 text-center d-flex align-center justify-center"
-      >
-        New to Prefect Cloud?
-        <router-link :to="'/login/sign-up'">
-          <div class="ml-1">
-            Create an account
-          </div>
-        </router-link>
-        .
-      </div>
-    </div>
   </v-container>
 </template>
 

@@ -1,6 +1,5 @@
 <script>
 import gql from 'graphql-tag'
-import LogRocket from 'logrocket'
 import { mapGetters } from 'vuex'
 import { formatTime } from '@/mixins/formatTimeMixin'
 import Alert from '@/components/Alert'
@@ -113,7 +112,6 @@ export default {
   computed: {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['user', 'timezone']),
-    ...mapGetters('license', ['hasPermission']),
     // Surface table headers based on viewport (mobile vs. desktop)
     headersByViewport() {
       return this.$vuetify.breakpoint.mdAndUp
@@ -121,11 +119,7 @@ export default {
         : this.headers.filter(header => header.mobile)
     },
     permissionsCheck() {
-      return (
-        this.hasPermission('create', 'project') &&
-        this.hasPermission('update', 'project') &&
-        this.hasPermission('delete', 'project')
-      )
+      return true
     },
     // If the user decides to move flows to a new project before deletion,
     // provide a list of candidate projects to take these flows
@@ -373,7 +367,6 @@ export default {
         this.isRemovingProject = false
         this.dialogRemoveProject = false
 
-        LogRocket.captureException(err)
         return false
       }
     },

@@ -77,9 +77,8 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant', 'role']),
-    ...mapGetters('license', ['hasPermission']),
     permissionsCheck() {
-      return !this.hasPermission('update', 'secret')
+      return false
     },
     secretExists() {
       if (!this.secretNames) return false

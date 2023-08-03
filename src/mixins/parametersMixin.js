@@ -20,7 +20,6 @@ export const parametersMixin = {
   },
   computed: {
     ...mapGetters('tenant', ['tenant']),
-    ...mapGetters('license', ['hasPermission']),
     parameterInput: {
       get() {
         return this.newParameterInput
@@ -36,10 +35,10 @@ export const parametersMixin = {
       }, [])
     },
     permissionsCheck() {
-      return !this.hasPermission('update', 'run')
+      return false
     },
     selectedFlow() {
-      return this.flow || this.flowGroup.flows.find(flow => !flow.archived)
+      return this.flow || this.flowGroup.flows.find((flow) => !flow.archived)
     },
     flowGroupParameters() {
       const fgParamObjArray = []
@@ -69,14 +68,14 @@ export const parametersMixin = {
       const fgParams = this.flowGroup?.default_parameters
       const selectedFlowParams = this.selectedFlowParameters
       this.diffBetweenFlowGroupAndFlow.forEach(
-        differentKey =>
+        (differentKey) =>
           (fgParams[differentKey] = selectedFlowParams[differentKey])
       )
       const paramifiedArray = []
       for (const [key, value] of Object.entries(fgParams)) {
         const required =
           this.selectedFlow?.parameters.filter(
-            paramObj => paramObj.name == key && paramObj.required
+            (paramObj) => paramObj.name == key && paramObj.required
           ).length > 0
         paramifiedArray.push({
           name: key,
@@ -137,7 +136,7 @@ export const parametersMixin = {
       // Collect any extra parameters.
       this.extraParameters = difference(
         Object.keys(parameters),
-        this.selectedFlow.parameters.map(param => param.name)
+        this.selectedFlow.parameters.map((param) => param.name)
       )
       if (
         this.missingRequiredParameters.length === 0 &&

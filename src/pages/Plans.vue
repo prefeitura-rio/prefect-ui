@@ -57,7 +57,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('license', ['license', 'tempLicenseType', 'hasPermission']),
+    ...mapGetters('license', ['license', 'tempLicenseType']),
     ...mapGetters('tenant', ['tenant']),
     planClass() {
       return {
@@ -75,7 +75,7 @@ export default {
       }
     },
     permissionsCheck() {
-      return this.hasPermission('create', 'license')
+      return true
     }
   },
   methods: {

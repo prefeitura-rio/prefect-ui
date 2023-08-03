@@ -1,7 +1,6 @@
 <script>
 import { mapGetters } from 'vuex'
 import CardTitle from '@/components/Card-Title'
-import LogRocket from 'logrocket'
 
 export default {
   components: { CardTitle },
@@ -38,9 +37,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant', 'role']),
-    ...mapGetters('license', ['permissions', 'hasPermission']),
+    ...mapGetters('license', ['permissions']),
     sortedProjects() {
       if (!this.projects) return []
       return [...this.projects].sort((a, b) =>
@@ -57,7 +55,7 @@ export default {
       return this.flowGroup.settings.lazarus_enabled
     },
     permissionsCheck() {
-      return !this.hasPermission('update', 'flow')
+      return false
     },
     projectHasChanged() {
       return this.selected.projectId !== this.flow.project.id
@@ -111,12 +109,6 @@ export default {
           }
         }, 500)
       } catch (e) {
-        LogRocket.captureException(e, {
-          extra: {
-            pageName: 'Flow Settings',
-            stage: 'Heartbeat Update'
-          }
-        })
         this.loading.heartbeat = false
         this.error.heartbeat = e
       }
@@ -164,12 +156,6 @@ export default {
           }
         }, 500)
       } catch (e) {
-        LogRocket.captureException(e, {
-          extra: {
-            pageName: 'Flow Settings',
-            stage: 'Lazarus Update'
-          }
-        })
         this.loading.lazarus = false
         this.error.lazarus = e
       }
@@ -204,12 +190,6 @@ export default {
           }
         }, 500)
       } catch (e) {
-        LogRocket.captureException(e, {
-          extra: {
-            pageName: 'Flow Settings',
-            stage: 'Project Change'
-          }
-        })
         this.loading.project = false
         this.error.project = e
       }
@@ -257,13 +237,6 @@ export default {
           }
         }, 500)
       } catch (e) {
-        LogRocket.captureException(e, {
-          extra: {
-            pageName: 'Flow Settings',
-            stage: 'Heartbeat Update'
-          }
-        })
-
         this.loading.versionLocking = false
         this.error.versionLocking = e
       }
@@ -376,7 +349,7 @@ export default {
           </div>
         </v-col>
       </v-row>
-      <v-row v-if="isCloud" class="mt-8">
+      <v-row class="mt-8">
         <v-col cols="12" class="pb-0">
           <div class="text-h6 primary--text">
             <!-- We don't really have the visual language necessary to use these I think -->
@@ -393,11 +366,7 @@ export default {
                   hide-details
                   color="primary"
                   :loading="loading.versionLocking"
-                  :disabled="
-                    permissionsCheck ||
-                      !hasPermission('feature', 'version-locking') ||
-                      loading.versionLocking
-                  "
+                  :disabled="permissionsCheck || loading.versionLocking"
                   @change="_handleVersionLockingChange"
                 >
                   <template #label>
@@ -421,10 +390,7 @@ export default {
             <span v-if="permissionsCheck">
               You don't have permission to modify flow settings.
             </span>
-            <span v-if="!hasPermission('feature', 'version-locking')">
-              Your team doesn't have access to version locking.
-            </span>
-            <span v-else>
+            <span>
               {{ isVersionLocked ? 'Disable' : 'Enable' }} version locking for
               this flow and its tasks.
             </span>

@@ -2,7 +2,7 @@
 import ConfirmDialog from '@/components/ConfirmDialog'
 import DateTime from '@/components/DateTime'
 import { formatTime } from '@/mixins/formatTimeMixin'
-import { mapGetters, mapActions } from 'vuex'
+import { mapActions } from 'vuex'
 
 export default {
   components: {
@@ -99,7 +99,6 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('license', ['hasPermission']),
     headers() {
       return this.$vuetify.breakpoint.mdAndUp
         ? this.allHeaders
@@ -340,7 +339,6 @@ export default {
                 }}</v-list-item-subtitle
               >
               <v-tooltip
-                v-if="hasPermission('delete', 'service-api-key')"
                 bottom
               >
                 <template #activator="{ on }">
@@ -379,7 +377,6 @@ export default {
       </template>
 
       <template
-        v-if="hasPermission('create', 'service-api-key')"
         #item.create="{ item }"
       >
         <v-btn
@@ -401,7 +398,6 @@ export default {
       <template #item.actions="{ item }">
         <v-tooltip bottom>
           <template
-            v-if="hasPermission('update', 'service-account')"
             #activator="{ on }"
           >
             <v-btn
@@ -417,7 +413,7 @@ export default {
           </template>
           Change Service Account role
         </v-tooltip>
-        <v-tooltip v-if="hasPermission('delete', 'service-account')" bottom>
+        <v-tooltip bottom>
           <template #activator="{ on }">
             <v-btn
               text
