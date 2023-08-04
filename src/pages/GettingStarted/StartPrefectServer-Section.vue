@@ -1,6 +1,7 @@
 <script>
 import ExternalLink from '@/components/ExternalLink'
 import { mapGetters, mapActions, mapMutations } from 'vuex'
+import config from '@/config'
 
 export default {
   components: {
@@ -8,8 +9,7 @@ export default {
   },
   data() {
     return {
-      defaultUrl:
-        process.env.VUE_APP_SERVER_URL,
+      defaultUrl: config.url_graphql,
       error: false,
       loading: false,
       success: false,

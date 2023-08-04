@@ -1,4 +1,4 @@
-const { VUE_APP_SERVER_URL } = process.env
+import config from '@/config'
 
 const state = {
   apiToken: null,
@@ -14,7 +14,7 @@ const getters = {
     // Fetch sync
     let authorized = false
     return Promise.all([
-      fetch(new URL('/auth/validate', VUE_APP_SERVER_URL), {
+      fetch(config.url_auth_validate, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

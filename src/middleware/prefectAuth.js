@@ -1,5 +1,5 @@
 import { fallbackApolloClient } from '@/vue-apollo'
-const { VUE_APP_SERVER_URL } = process.env
+import config from '@/config'
 
 const prefectAuth = async (idToken) => {
   try {
@@ -51,7 +51,7 @@ const prefectRefresh = async (accessToken) => {
 
 const prefectUser = async () => {
   try {
-    const response = await fetch(new URL('/user/me', VUE_APP_SERVER_URL), {
+    const response = await fetch(config.url_me, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

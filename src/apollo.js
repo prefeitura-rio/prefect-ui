@@ -2,6 +2,7 @@ import { ApolloClient } from '@apollo/client/core'
 import { HttpLink, from } from '@apollo/client'
 import { onError } from 'apollo-link-error'
 import { InMemoryCache } from 'apollo-cache-inmemory'
+import config from '@/config'
 
 const cache = new InMemoryCache()
 
@@ -52,10 +53,7 @@ const errorAfterware = onError(
   }
 )
 
-const link = from([
-  errorAfterware,
-  new HttpLink({ uri: process.env.VUE_APP_SERVER_URL })
-])
+const link = from([errorAfterware, new HttpLink({ uri: config.url_graphql })])
 
 const options = {
   cache: cache,

@@ -1,5 +1,5 @@
 import { Client } from '@/apollo.js'
-const { VUE_APP_SERVER_URL } = process.env
+import config from '@/config'
 
 const client = Client('authorization')
 
@@ -55,15 +55,12 @@ export const authorizeTenant = async (accessToken, tenantId) => {
     throw new Error('No access token or no tenant id passed to authorizeTenant')
   }
 
-  const res = await fetch(
-    new URL(`/user/me/tenant/${tenantId}`, VUE_APP_SERVER_URL),
-    {
-      method: 'POST',
-      headers: {
-        authorization: `Bearer ${accessToken}`
-      }
+  const res = await fetch(config.url_me_tenant_id(tenantId), {
+    method: 'POST',
+    headers: {
+      authorization: `Bearer ${accessToken}`
     }
-  )
+  })
 
   const data = await res.json()
 

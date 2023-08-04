@@ -29,7 +29,6 @@ export const setStartupTenant = async () => {
 
 let loading = false
 export const start = async () => {
-  console.log('STARTT')
   if (
     window.location.pathname?.includes('logout') ||
     window.location.pathname?.includes('access-denied') ||

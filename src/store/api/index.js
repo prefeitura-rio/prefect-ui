@@ -1,4 +1,5 @@
 import { fallbackApolloClient } from '@/vue-apollo'
+import config from '@/config'
 
 const maxRetries = 3
 
@@ -10,9 +11,9 @@ const state = {
   coreVersion: null,
   releaseTimestamp: null,
   apiMode: null,
-  cloudUrl: process.env.VUE_APP_SERVER_URL,
+  cloudUrl: config.url_graphql,
   retries: 0,
-  serverUrl: process.env.VUE_APP_SERVER_URL,
+  serverUrl: config.url_graphql,
   version: null
 }
 

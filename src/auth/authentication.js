@@ -1,15 +1,10 @@
 import store from '@/store'
+import config from '@/config'
 import { setStartupTenant } from '@/main.js'
 
-const { VUE_APP_SERVER_URL } = process.env
-
 class AuthProxyClient {
-  constructor() {
-    this.url = VUE_APP_SERVER_URL
-  }
-
   async signIn({ username, password }) {
-    const response = await fetch(new URL('/auth/login', this.url), {
+    const response = await fetch(config.url_auth_login, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password })
@@ -19,7 +14,7 @@ class AuthProxyClient {
   }
 
   async getTenants({ token }) {
-    const response = await fetch(new URL('/user/me/tenant', this.url), {
+    const response = await fetch(config.url_me_tenant, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

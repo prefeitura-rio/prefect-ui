@@ -8,7 +8,7 @@ import TeamSideNav from '@/components/Nav/TeamSideNav'
 import WorkQueueBanner from '@/components/WorkQueueBanner'
 import { eventsMixin } from '@/mixins/eventsMixin'
 import VSnackbars from '@/components/Snackbars/Snackbars'
-const { VUE_APP_SERVER_URL } = process.env
+import config from '@/config'
 
 const fullPageRoutes = [
   'api',
@@ -178,7 +178,7 @@ export default {
     // window.removeEventListener('focus', this.handleVisibilityChange)
   },
   async mounted() {
-    this.setServerUrl(VUE_APP_SERVER_URL)
+    this.setServerUrl(config.url_graphql)
     this.refresh()
 
     if (this.isAuthorized) {
