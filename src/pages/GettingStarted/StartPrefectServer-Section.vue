@@ -9,7 +9,6 @@ export default {
   data() {
     return {
       defaultUrl:
-        window.prefect_ui_settings?.server_url ||
         process.env.VUE_APP_SERVER_URL,
       error: false,
       loading: false,

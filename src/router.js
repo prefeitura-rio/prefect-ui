@@ -457,7 +457,7 @@ function scrollToHash(to) {
 export const createRouter = () => {
   const router = new Router({
     mode: 'history',
-    base: window.prefect_ui_settings?.base_url || '',
+    base: '',
     routes,
     scrollBehavior(to) {
       if (to.hash) {

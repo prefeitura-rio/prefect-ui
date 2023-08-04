@@ -1,7 +1,5 @@
 import { fallbackApolloClient } from '@/vue-apollo'
 
-const SERVER_KEY = `${process.env.VUE_APP_RELEASE_TIMESTAMP}_server_url`
-
 const maxRetries = 3
 
 const state = {
@@ -14,10 +12,7 @@ const state = {
   apiMode: null,
   cloudUrl: process.env.VUE_APP_SERVER_URL,
   retries: 0,
-  serverUrl:
-    localStorage.getItem(SERVER_KEY) ||
-    window.prefect_ui_settings?.server_url ||
-    process.env.VUE_APP_SERVER_URL,
+  serverUrl: process.env.VUE_APP_SERVER_URL,
   version: null
 }
 
@@ -116,11 +111,9 @@ const mutations = {
   },
   setServerUrl(state, url) {
     state.serverUrl = url
-    localStorage.setItem(SERVER_KEY, url)
   },
   unsetServerUrl(state) {
     state.serverUrl = null
-    localStorage.removeItem(SERVER_KEY)
   },
   setVersion(state, version) {
     state.version = version

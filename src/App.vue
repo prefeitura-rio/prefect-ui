@@ -8,8 +8,7 @@ import TeamSideNav from '@/components/Nav/TeamSideNav'
 import WorkQueueBanner from '@/components/WorkQueueBanner'
 import { eventsMixin } from '@/mixins/eventsMixin'
 import VSnackbars from '@/components/Snackbars/Snackbars'
-
-const SERVER_KEY = `${process.env.VUE_APP_RELEASE_TIMESTAMP}_server_url`
+const { VUE_APP_SERVER_URL } = process.env
 
 const fullPageRoutes = [
   'api',
@@ -179,15 +178,7 @@ export default {
     // window.removeEventListener('focus', this.handleVisibilityChange)
   },
   async mounted() {
-    if (!localStorage.getItem(SERVER_KEY)) {
-      localStorage.setItem(
-        SERVER_KEY,
-        window.prefect_ui_settings?.server_url || process.env.VUE_APP_SERVER_URL
-      )
-
-      this.setServerUrl(localStorage.getItem(SERVER_KEY))
-    }
-
+    this.setServerUrl(VUE_APP_SERVER_URL)
     this.refresh()
 
     if (this.isAuthorized) {
