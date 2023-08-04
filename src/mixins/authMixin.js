@@ -1,7 +1,5 @@
 import { authClient, authenticate } from '@/auth/authentication'
 
-// const { VUE_APP_PUBLIC_CLIENT_ID, VUE_APP_PUBLIC_ISSUER } = process.env
-
 export const authMixin = {
   data() {
     return {

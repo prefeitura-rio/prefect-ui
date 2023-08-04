@@ -3,7 +3,7 @@ import { fallbackApolloClient } from '@/vue-apollo'
 const maxRetries = 3
 
 const state = {
-  backend: process.env.VUE_APP_BACKEND || 'SERVER',
+  backend: 'SERVER',
   connected: true,
   connectionMessage: null,
   connectionTimeout: null,

@@ -2,24 +2,20 @@
 
 # Set default prefect_ui_settings if
 # env vars not present
-if [[ -z ${PREFECT_SERVER__APOLLO_URL} ]]
+if [[ -z ${PREFECT_AUTH_PROXY_URL} ]]
 then
-    echo "Missing the PREFECT_SERVER__APOLLO_URL environment variable.  Using default"
-    PREFECT_SERVER__APOLLO_URL="http://localhost:4200/graphql"
+    echo "Missing the PREFECT_AUTH_PROXY_URL environment variable.  Using default"
+    PREFECT_AUTH_PROXY_URL="http://localhost:4200/graphql"
 else
-    echo "Using the PREFECT_SERVER__APOLLO_URL environment variable: $PREFECT_SERVER__APOLLO_URL"
+    echo "Using the PREFECT_AUTH_PROXY_URL environment variable: $PREFECT_AUTH_PROXY_URL"
 fi
 
-if [[ -z ${PREFECT_SERVER__BASE_URL} ]]
-then
-    echo "Missing the PREFECT_SERVER__BASE_URL environment variable.  Using default"
-    PREFECT_SERVER__BASE_URL="/"
-else
-    echo "Using the PREFECT_SERVER__BASE_URL environment variable: $PREFECT_SERVER__BASE_URL"
-fi
-
-sed -i "s,PREFECT_SERVER__APOLLO_URL,$PREFECT_SERVER__APOLLO_URL," /var/www/settings.json 
-sed -i "s,PREFECT_SERVER__BASE_URL,$PREFECT_SERVER__BASE_URL," /var/www/settings.json
+# Replace env vars in files served by NGINX
+ROOT_DIR=/var/www
+for file in $ROOT_DIR/js/*.js* $ROOT_DIR/index.html $ROOT_DIR/precache-manifest*.js;
+do
+    sed -i 's|VUE_APP_SERVER_URL_PLACEHOLDER|'${PREFECT_AUTH_PROXY_URL}'|g' $file
+done
 
 echo "👾👾👾 UI running at localhost:8080 👾👾👾"
 

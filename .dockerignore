@@ -42,6 +42,5 @@ public/fonts/*.ttf
 public/fonts/*.otf
 public/fonts/*.js
 
-.env
 Dockerfile
 update.sh
